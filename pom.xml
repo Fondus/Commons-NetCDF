@@ -12,7 +12,7 @@
 	<inceptionYear>2017</inceptionYear>
 
 	<description>
-		The Commons-NetCDF Library is chaining APIs/Utilities of build processing NetCDF file, base on UCAR unidata library.
+		The Commons-NetCDF Library is the simplest to use chaining APIs/Utilities of build processing and writing data to NetCDF file.
 	</description>
 
 	<organization>
