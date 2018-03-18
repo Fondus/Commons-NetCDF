@@ -1,7 +1,5 @@
 # Commons-NetCDF
-Commons-NetCDF Library is chaining APIs/Utilities of build processing NetCDF file, it's is the simplest to use chaining APIs to build  and write data to NetCDF file. 
-
-The Commons-NetCDF Library a thin layer on top of the [UCAR unidata NetCDF Java library](https://www.unidata.ucar.edu/software/thredds/current/netcdf-java/) that allows users to define NetCDF structures on builder chaining pattern without check dimensions, variables and attributes relationship, and writing data to the NetCDF file.
+The Commons-NetCDF Library a thin layer on top of the [UCAR unidata NetCDF Java library](https://www.unidata.ucar.edu/software/thredds/current/netcdf-java/) that allows users simplest to define NetCDF structures on builder chaining pattern without check dimensions, variables and attributes relationship, and writing data to the NetCDF file.
 
 The Commons-NetCDF Library comes in two flavors.
 
