@@ -18,5 +18,37 @@
 *.tar.gz
 *.rar
 
+# Built application files  
+*.apk  
+*.ap_ 
+
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
+
+# ignore eclipse
+.project
+.classpath
+.settings
+.metadata
+bin/
+proguard/
+
+# ignore Maven generated target folders
+target/
+build/
+
+## .gitignore for windows
+
+# Windows image file caches
+Thumbs.db
+ehthumbs.db
+
+# Folder config file
+Desktop.ini
+
+## .gitignore for mac os x
+
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
