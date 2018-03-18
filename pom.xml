@@ -1,0 +1,137 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>tw.fondus.commons</groupId>
+	<artifactId>commons-netcdf</artifactId>
+	<version>0.6.0</version>
+	<packaging>jar</packaging>
+
+	<name>The Commons-NetCDF Library</name>
+	<url>http://maven.apache.org</url>
+	<inceptionYear>2017</inceptionYear>
+
+	<description>
+		The Commons-NetCDF Library is chaining APIs/Utilities of build processing NetCDF file, base on UCAR unidata library.
+	</description>
+
+	<organization>
+		<name>FondUS Technology Co., Ltd., TW</name>
+		<url>https://github.com/Fondus</url>
+	</organization>
+	<!-- groupId, developers and build sections are all inherited by child modules -->
+	<developers>
+		<developer>
+			<name>Brad Chen</name>
+			<organization>FondUS Technology Co., Ltd., TW</organization>
+			<email>vipcube@gmail.com</email>
+		</developer>
+	</developers>
+
+	<properties>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<string.version>0.4.0</string.version>
+		<jodatime.version>2.9.9</jodatime.version>
+		<netcdf.version>4.6.11</netcdf.version>
+		<guava.version>23.4-jre</guava.version>
+		<junit.version>4.12</junit.version>
+		<commons.utils.version>0.7.0</commons.utils.version>
+	</properties>
+
+	<repositories>
+		<repository>
+			<id>unidata-all</id>
+			<name>Unidata All</name>
+			<url>https://artifacts.unidata.ucar.edu/repository/unidata-all/</url>
+		</repository>
+	</repositories>
+
+	<dependencies>
+		<!-- Strman -->
+		<dependency>
+			<groupId>com.shekhargulati</groupId>
+			<artifactId>strman</artifactId>
+			<version>${string.version}</version>
+		</dependency>
+		<!-- Joda-time -->
+		<dependency>
+			<groupId>joda-time</groupId>
+			<artifactId>joda-time</artifactId>
+			<version>${jodatime.version}</version>
+		</dependency>
+		<!-- NetCDF -->
+		<dependency>
+			<groupId>edu.ucar</groupId>
+			<artifactId>netcdf4</artifactId>
+			<version>${netcdf.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>joda-time</groupId>
+					<artifactId>joda-time</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.google.guava</groupId>
+					<artifactId>guava</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<!-- Google Guava -->
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>${guava.version}</version>
+		</dependency>
+		<!-- JUnit -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>${junit.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<!-- Commons-Utils -->
+		<dependency>
+			<groupId>tw.fondus.commons</groupId>
+			<artifactId>commons-utils</artifactId>
+			<version>${commons.utils.version}</version>
+			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>org.dom4j</groupId>
+					<artifactId>dom4j</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.apache.commons</groupId>
+					<artifactId>commons-lang3</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.apache.xmlgraphics</groupId>
+					<artifactId>batik-transcoder</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.apache.xmlgraphics</groupId>
+					<artifactId>fop</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.5.1</version>
+				<configuration>
+					<source>${maven.compiler.source}</source>
+					<target>${maven.compiler.target}</target>
+					<encoding>${project.build.sourceEncoding}</encoding>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+</project>
