@@ -100,14 +100,14 @@ public class NetCDFBuilderTest {
 				.addVariableAttribute("time", VariableAttribute.KEY_AXIS, VariableAttribute.AXIS_TIME)
 				.addVariable("y", DataType.DOUBLE, new String[] { "y" })
 				.addVariableAttribute("y", VariableAttribute.KEY_NAME, VariableAttribute.COORDINATES_Y_WGS84)
-				.addVariableAttribute("y", VariableAttribute.KEY_NAME_LONG, VariableAttribute.NAME_Y_TWD97)
+				.addVariableAttribute("y", VariableAttribute.KEY_NAME_LONG, VariableAttribute.NAME_Y_WGS84)
 				.addVariableAttribute("y", VariableAttribute.KEY_UNITS, VariableAttribute.UNITS_Y_WGS84)
 				.addVariableAttribute("y", VariableAttribute.KEY_AXIS, VariableAttribute.AXIS_Y)
 				.addVariableAttribute("y", VariableAttribute.KEY_MISSINGVALUE,
 						VariableAttribute.MISSINGVALUE_COORDINATES)
 				.addVariable("x", DataType.DOUBLE, new String[] { "x" })
 				.addVariableAttribute("x", VariableAttribute.KEY_NAME, VariableAttribute.COORDINATES_X_WGS84)
-				.addVariableAttribute("x", VariableAttribute.KEY_NAME_LONG, VariableAttribute.NAME_X_TWD97)
+				.addVariableAttribute("x", VariableAttribute.KEY_NAME_LONG, VariableAttribute.NAME_X_WGS84)
 				.addVariableAttribute("x", VariableAttribute.KEY_UNITS, VariableAttribute.UNITS_X_WGS84)
 				.addVariableAttribute("x", VariableAttribute.KEY_AXIS, VariableAttribute.AXIS_X)
 				.addVariableAttribute("x", VariableAttribute.KEY_MISSINGVALUE,
