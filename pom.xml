@@ -109,14 +109,6 @@
 					<groupId>commons-logging</groupId>
 					<artifactId>commons-logging</artifactId>
 				</exclusion>
-				<exclusion>
-					<groupId>org.apache.xmlgraphics</groupId>
-					<artifactId>batik-transcoder</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.apache.xmlgraphics</groupId>
-					<artifactId>fop</artifactId>
-				</exclusion>
 			</exclusions>
 		</dependency>
 	</dependencies>
