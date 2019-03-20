@@ -5,9 +5,7 @@ import java.util.Optional;
 import com.google.common.base.Preconditions;
 
 import strman.Strman;
-import ucar.nc2.Attribute;
 import ucar.nc2.NetcdfFileWriter;
-import ucar.nc2.Variable;
 
 /**
  * Validate NetCDF structures, such like global attribute, dimension, variable.
@@ -34,14 +32,7 @@ public class ValidateUtils {
 	 * @param hasAlready
 	 */
 	public static void validateGlobalAttribute(NetcdfFileWriter writer, String name, boolean hasAlready){
-		Optional<Attribute> opt = Optional.ofNullable(writer.findGlobalAttribute(name));
-		if ( hasAlready ){
-			Preconditions.checkState(!opt.isPresent(),
-					Strman.append("This NetCDF has the global attribute: ", name, " already!"));
-		} else {
-			Preconditions.checkState(opt.isPresent(),
-					Strman.append("This NetCDF hasn't the global attribute: ", name, "."));
-		}
+		validateProcess( writer.findGlobalAttribute( name ), "global attribute", name, hasAlready );
 	}
 	
 	/**
@@ -69,13 +60,25 @@ public class ValidateUtils {
 	 * @param hasAlready
 	 */
 	public static void validateVariable(NetcdfFileWriter writer, String name, boolean hasAlready){
-		Optional<Variable> opt = Optional.ofNullable(writer.findVariable(name));
+		validateProcess( writer.findVariable( name ), "variable", name, hasAlready );
+	}
+	
+	/**
+	 * Validate process of has type or not.
+	 * 
+	 * @param instance
+	 * @param type
+	 * @param name
+	 * @param hasAlready
+	 */
+	private static <T> void validateProcess( T instance, String type, String name, boolean hasAlready ) {
+		Optional<T> opt = Optional.ofNullable( instance );
 		if ( hasAlready ){
-			Preconditions.checkState(!opt.isPresent(),
-					Strman.append("This NetCDF has the variable: ", name, " already!"));
+			Preconditions.checkState( !opt.isPresent(),
+					Strman.append("This NetCDF has the ", type, ": ", name, " already!"));
 		} else {
-			Preconditions.checkState(opt.isPresent(),
-					Strman.append("This NetCDF hasn't the variable: ", name, "."));
+			Preconditions.checkState( opt.isPresent(),
+					Strman.append("This NetCDF hasn't the ", type, ": ", name, "."));
 		}
 	}
 }
