@@ -69,8 +69,6 @@ public class NetCDFReader implements AutoCloseable {
 	 * @return
 	 */
 	public List<Attribute> getGlobalAttributes() {
-		Preconditions.checkState( this.optNetCDF.isPresent(), "The NetCDF not open yet!" );
-
 		return this.optNetCDF.map( nc -> nc.getGlobalAttributes() )
 				.orElseThrow( () -> new NetCDFException( "The NetCDF not open yet!" ) );
 	}
@@ -104,8 +102,6 @@ public class NetCDFReader implements AutoCloseable {
 	 * @throws InvalidRangeException
 	 */
 	public Optional<Array> readVariable( String id ) {
-		Preconditions.checkState( this.optNetCDF.isPresent(), "The NetCDF not open yet!" );
-		
 		return this.optNetCDF.map( nc -> {
 			try {
 				return nc.readSection( id );
