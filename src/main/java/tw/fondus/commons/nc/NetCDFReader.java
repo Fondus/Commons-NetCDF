@@ -71,7 +71,8 @@ public class NetCDFReader implements AutoCloseable {
 	public List<Attribute> getGlobalAttributes() {
 		Preconditions.checkState( this.optNetCDF.isPresent(), "The NetCDF not open yet!" );
 
-		return this.optNetCDF.get().getGlobalAttributes();
+		return this.optNetCDF.map( nc -> nc.getGlobalAttributes() )
+				.orElseThrow( () -> new NetCDFException( "The NetCDF not open yet!" ) );
 	}
 
 	/**
@@ -80,9 +81,8 @@ public class NetCDFReader implements AutoCloseable {
 	 * @return
 	 */
 	public List<Dimension> getDimensions() {
-		Preconditions.checkState( this.optNetCDF.isPresent(), "The NetCDF not open yet!" );
-
-		return this.optNetCDF.get().getDimensions();
+		return this.optNetCDF.map( nc -> nc.getDimensions() )
+				.orElseThrow( () -> new NetCDFException( "The NetCDF not open yet!" ) );
 	}
 
 	/**
@@ -91,9 +91,31 @@ public class NetCDFReader implements AutoCloseable {
 	 * @return
 	 */
 	public List<Variable> getVariables() {
+		return this.optNetCDF.map( nc -> nc.getVariables() )
+				.orElseThrow( () -> new NetCDFException( "The NetCDF not open yet!" ) );
+	}
+	
+	/**
+	 * Read variable value.
+	 * 
+	 * @param id
+	 * @return
+	 * @throws IOException
+	 * @throws InvalidRangeException
+	 */
+	public Optional<Array> readVariable( String id ) {
 		Preconditions.checkState( this.optNetCDF.isPresent(), "The NetCDF not open yet!" );
-
-		return this.optNetCDF.get().getVariables();
+		
+		return this.optNetCDF.map( nc -> {
+			try {
+				return nc.readSection( id );
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (InvalidRangeException e) {
+				e.printStackTrace();
+			}
+			return null;
+		} );
 	}
 
 	/**
@@ -104,6 +126,7 @@ public class NetCDFReader implements AutoCloseable {
 	 * @throws IOException
 	 * @throws InvalidRangeException
 	 */
+	@Deprecated
 	public Array readVariableValue( String id ) throws IOException, InvalidRangeException {
 		Preconditions.checkState( this.optNetCDF.isPresent(), "The NetCDF not open yet!" );
 
@@ -117,6 +140,7 @@ public class NetCDFReader implements AutoCloseable {
 	 * @return
 	 * @throws IOException
 	 */
+	@Deprecated
 	public List<Array> readVariableValues( List<Variable> variables ) throws IOException {
 		Preconditions.checkState( this.optNetCDF.isPresent(), "The NetCDF not open yet!" );
 
@@ -143,5 +167,4 @@ public class NetCDFReader implements AutoCloseable {
 			}
 		} );
 	}
-
 }
