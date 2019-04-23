@@ -13,6 +13,8 @@ public class VariableAttribute {
 	public static final String KEY_AXIS = "axis";
 	public static final String KEY_MISSINGVALUE = "_FillValue";
 	public static final String KEY_COORDINATES = "coordinates";
+	public static final String KEY_SCALE = "scale_factor";
+	public static final String KEY_OFFSET = "add_offset";
 	
 	public static final float MISSINGVALUE = -9999;
 	public static final double MISSINGVALUE_COORDINATES = 9.96921E36;
