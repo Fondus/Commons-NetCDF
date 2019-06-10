@@ -152,6 +152,12 @@ public class NetCDFReader implements AutoCloseable {
 	public DataType getVariableType( Variable variable ){
 		return variable.getDataType();
 	}
+	
+	@Override
+	public String toString() {
+		return this.optNetCDF.map( nc -> nc.toString() )
+				.orElseThrow( () -> new NetCDFException( "The NetCDF not open yet!" ) );
+	}
 
 	@Override
 	public void close() throws Exception {
