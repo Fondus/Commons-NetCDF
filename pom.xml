@@ -72,6 +72,18 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+		<!-- GRIB -->
+		<dependency>
+			<groupId>edu.ucar</groupId>
+			<artifactId>grib</artifactId>
+			<version>${netcdf.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>com.google.guava</groupId>
+					<artifactId>guava</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
 		<!-- Google Guava -->
 		<dependency>
 			<groupId>com.google.guava</groupId>
