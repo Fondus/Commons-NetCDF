@@ -422,8 +422,7 @@ public class NetCDFBuilder {
 
 				list.add( this.dimensionsMap.get( dimension ) );
 			} );
-			;
-
+			
 			return list;
 		}
 	}
