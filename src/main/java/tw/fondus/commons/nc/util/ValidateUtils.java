@@ -14,16 +14,16 @@ import ucar.nc2.NetcdfFileWriter;
  *
  */
 public class ValidateUtils {
-	
+
 	/**
 	 * Validate is define mode or not.
 	 * 
 	 * @param writer
 	 */
-	public static void validateDefine(NetcdfFileWriter writer){
-		Preconditions.checkState(writer.isDefineMode(), "The NetCDF file not in define mode.");
+	public static void validateDefine( NetcdfFileWriter writer ) {
+		Preconditions.checkState( writer.isDefineMode(), "The NetCDF file not in define mode." );
 	}
-	
+
 	/**
 	 * Validate has global attribute or not.
 	 * 
@@ -31,10 +31,10 @@ public class ValidateUtils {
 	 * @param name
 	 * @param hasAlready
 	 */
-	public static void validateGlobalAttribute(NetcdfFileWriter writer, String name, boolean hasAlready){
+	public static void validateGlobalAttribute( NetcdfFileWriter writer, String name, boolean hasAlready ) {
 		validateProcess( writer.findGlobalAttribute( name ), "global attribute", name, hasAlready );
 	}
-	
+
 	/**
 	 * Validate has dimension or not.
 	 * 
@@ -42,16 +42,16 @@ public class ValidateUtils {
 	 * @param name
 	 * @param hasAlready
 	 */
-	public static void validateDimension(NetcdfFileWriter writer, String name, boolean hasAlready){
-		if ( hasAlready ){
-			Preconditions.checkState(!writer.hasDimension(null, name),
-					Strman.append("This NetCDF has the dimension: ", name, " already!"));
+	public static void validateDimension( NetcdfFileWriter writer, String name, boolean hasAlready ) {
+		if ( hasAlready ) {
+			Preconditions.checkState( !writer.hasDimension( null, name ),
+					Strman.append( "This NetCDF has the dimension: ", name, " already!" ) );
 		} else {
-			Preconditions.checkState(writer.hasDimension(null, name),
-					Strman.append("This NetCDF hasn't the dimension: ", name, "."));
+			Preconditions.checkState( writer.hasDimension( null, name ),
+					Strman.append( "This NetCDF hasn't the dimension: ", name, "." ) );
 		}
 	}
-	
+
 	/**
 	 * Validate has variable or not.
 	 * 
@@ -59,10 +59,10 @@ public class ValidateUtils {
 	 * @param name
 	 * @param hasAlready
 	 */
-	public static void validateVariable(NetcdfFileWriter writer, String name, boolean hasAlready){
+	public static void validateVariable( NetcdfFileWriter writer, String name, boolean hasAlready ) {
 		validateProcess( writer.findVariable( name ), "variable", name, hasAlready );
 	}
-	
+
 	/**
 	 * Validate process of has type or not.
 	 * 
@@ -73,12 +73,12 @@ public class ValidateUtils {
 	 */
 	private static <T> void validateProcess( T instance, String type, String name, boolean hasAlready ) {
 		Optional<T> opt = Optional.ofNullable( instance );
-		if ( hasAlready ){
+		if ( hasAlready ) {
 			Preconditions.checkState( !opt.isPresent(),
-					Strman.append("This NetCDF has the ", type, ": ", name, " already!"));
+					Strman.append( "This NetCDF has the ", type, ": ", name, " already!" ) );
 		} else {
 			Preconditions.checkState( opt.isPresent(),
-					Strman.append("This NetCDF hasn't the ", type, ": ", name, "."));
+					Strman.append( "This NetCDF hasn't the ", type, ": ", name, "." ) );
 		}
 	}
 }
