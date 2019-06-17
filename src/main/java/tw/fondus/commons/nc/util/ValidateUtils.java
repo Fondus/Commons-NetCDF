@@ -29,10 +29,10 @@ public class ValidateUtils {
 	 * 
 	 * @param writer
 	 * @param name
-	 * @param hasAlready
+	 * @param notHas
 	 */
-	public static void validateGlobalAttribute( NetcdfFileWriter writer, String name, boolean hasAlready ) {
-		validateProcess( writer.findGlobalAttribute( name ), "global attribute", name, hasAlready );
+	public static void validateGlobalAttribute( NetcdfFileWriter writer, String name, boolean notHas ) {
+		validateProcess( writer.findGlobalAttribute( name ), "global attribute", name, notHas );
 	}
 
 	/**
@@ -40,10 +40,10 @@ public class ValidateUtils {
 	 * 
 	 * @param writer
 	 * @param name
-	 * @param hasAlready
+	 * @param notHas
 	 */
-	public static void validateDimension( NetcdfFileWriter writer, String name, boolean hasAlready ) {
-		if ( hasAlready ) {
+	public static void validateDimension( NetcdfFileWriter writer, String name, boolean notHas ) {
+		if ( notHas ) {
 			Preconditions.checkState( !writer.hasDimension( null, name ),
 					Strman.append( "This NetCDF has the dimension: ", name, " already!" ) );
 		} else {
@@ -57,10 +57,10 @@ public class ValidateUtils {
 	 * 
 	 * @param writer
 	 * @param name
-	 * @param hasAlready
+	 * @param notHas
 	 */
-	public static void validateVariable( NetcdfFileWriter writer, String name, boolean hasAlready ) {
-		validateProcess( writer.findVariable( name ), "variable", name, hasAlready );
+	public static void validateVariable( NetcdfFileWriter writer, String name, boolean notHas ) {
+		validateProcess( writer.findVariable( name ), "variable", name, notHas );
 	}
 
 	/**
@@ -69,11 +69,11 @@ public class ValidateUtils {
 	 * @param instance
 	 * @param type
 	 * @param name
-	 * @param hasAlready
+	 * @param notHas
 	 */
-	private static <T> void validateProcess( T instance, String type, String name, boolean hasAlready ) {
+	private static <T> void validateProcess( T instance, String type, String name, boolean notHas ) {
 		Optional<T> opt = Optional.ofNullable( instance );
-		if ( hasAlready ) {
+		if ( notHas ) {
 			Preconditions.checkState( !opt.isPresent(),
 					Strman.append( "This NetCDF has the ", type, ": ", name, " already!" ) );
 		} else {
