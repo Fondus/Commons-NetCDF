@@ -68,6 +68,15 @@ public class NetCDFReader implements AutoCloseable {
 		Preconditions.checkState( NetcdfDataset.canOpen( path ), "The NetCDF file can't be open." );
 		return new NetCDFReader( NetcdfDataset.openDataset( path ) );
 	}
+	
+	/**
+	 * Get the bottom API of NetCDF.
+	 * 
+	 * @return
+	 */
+	public NetcdfFile getNetCDF() {
+		return this.orElseThrow( this.optNetCDF );
+	}
 
 	/**
 	 * Open the local NetCDF file.
