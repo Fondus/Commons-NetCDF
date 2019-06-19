@@ -1,16 +1,15 @@
-package tw.fondus.commons.nc.util;
+package tw.fondus.commons.nc;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import tw.fondus.commons.nc.NetCDFReader;
+import tw.fondus.commons.nc.util.CommonsUtils;
 import tw.fondus.commons.util.file.PathUtils;
-import ucar.nc2.Variable;
 
 /**
  * The unit test of NerCDF reader.
@@ -32,22 +31,25 @@ public class NetCDFReaderTest {
 	@Test
 	public void test() throws Exception {
 		try ( NetCDFReader reader = NetCDFReader.read( this.url );){
+			Assert.assertTrue( !reader.getGlobalAttributes().isEmpty() );
 			reader.getGlobalAttributes().forEach( att -> {
 				System.out.println( att.getShortName() + "\t" + att.getStringValue() );
 			} );
 			
+			Assert.assertTrue( !reader.getDimensions().isEmpty() );
 			reader.getDimensions().forEach( dimension -> {
 				System.out.println( dimension.getFullName() );
 				System.out.println( dimension.getLength() );
 			} );
 			
-			List<Variable> variables = reader.getVariables();
-			variables.stream()
-				.filter( variable -> variable.getFullName().equals( "precipitation_radar" ) )
-				.forEach( variable -> {
-				
+			Assert.assertTrue( !reader.getVariables().isEmpty() );
+			reader.getVariables().forEach( variable -> {
 				System.out.println( CommonsUtils.getVariableType( variable ) );
 			} );
+			
+			Assert.assertTrue( reader.findGlobalAttribute( "references" ).isPresent() );
+			Assert.assertTrue( reader.findDimension( "time" ).isPresent() );
+			Assert.assertTrue( reader.findVariable( "precipitation_radar" ).isPresent() );
 		}
 	}
 
