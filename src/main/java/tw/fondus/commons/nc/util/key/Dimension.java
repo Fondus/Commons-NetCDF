@@ -1,0 +1,16 @@
+package tw.fondus.commons.nc.util.key;
+
+/**
+ * The standard dimension name for usually use.
+ * 
+ * @author Brad Chen
+ * @since 0.7.0
+ */
+public class Dimension {
+	public static final String TIME = "time";
+	public static final String X = "x";
+	public static final String Y = "y";
+	public static final String COL = "col";
+	public static final String ROW = "row";
+	public static final String STATION = "stations";
+}
