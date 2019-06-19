@@ -7,6 +7,7 @@ package tw.fondus.commons.nc.util.key;
  * @since 0.7.0
  */
 public class Variable {
+	public static final String TIME = "time";
 	public static final String LAT = "lat";
 	public static final String LON = "lon";
 	public static final String X = "x";
