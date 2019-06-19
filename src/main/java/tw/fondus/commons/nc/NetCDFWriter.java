@@ -16,7 +16,7 @@ import ucar.nc2.NetcdfFileWriter;
  * @author Brad Chen
  *
  */
-public class NetCDFWriter {
+public class NetCDFWriter implements AutoCloseable {
 	private NetcdfFileWriter writer;
 
 	public NetCDFWriter(@Nonnull NetcdfFileWriter writer) {
@@ -65,6 +65,7 @@ public class NetCDFWriter {
 	 * 
 	 * @throws IOException
 	 */
+	@Override
 	public void close() throws IOException {
 		this.writer.flush();
 		this.writer.close();
