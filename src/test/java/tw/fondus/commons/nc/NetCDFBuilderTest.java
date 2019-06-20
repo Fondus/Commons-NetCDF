@@ -14,9 +14,9 @@ import org.junit.Test;
 
 import strman.Strman;
 import tw.fondus.commons.nc.NetCDFBuilder;
-import tw.fondus.commons.nc.util.key.Dimension;
+import tw.fondus.commons.nc.util.key.DimensionName;
 import tw.fondus.commons.nc.util.key.GlobalAttribute;
-import tw.fondus.commons.nc.util.key.Variable;
+import tw.fondus.commons.nc.util.key.VariableName;
 import tw.fondus.commons.nc.util.key.VariableAttribute;
 import tw.fondus.commons.util.time.TimeUtils;
 import ucar.ma2.Array;
@@ -72,9 +72,9 @@ public class NetCDFBuilderTest {
 		} );
 
 		this.valueMap = new HashMap<String, Array>();
-		this.valueMap.put( Dimension.X, x );
-		this.valueMap.put( Dimension.Y, y );
-		this.valueMap.put( Dimension.TIME, times );
+		this.valueMap.put( DimensionName.X, x );
+		this.valueMap.put( DimensionName.Y, y );
+		this.valueMap.put( DimensionName.TIME, times );
 		this.valueMap.put( "rainfall", rainfall );
 	}
 
@@ -95,36 +95,36 @@ public class NetCDFBuilderTest {
 				.addGlobalAttribute( GlobalAttribute.SUMMARY, "Data exported from FEWS-Taiwan" )
 				.addGlobalAttribute( GlobalAttribute.DATE_CREATE,
 						Strman.append( TimeUtils.toString( createTime, TimeUtils.YMDHMS ), " GMT" ) )
-				.addDimension( Dimension.TIME, 10 )
-				.addDimension( Dimension.Y, 10 )
-				.addDimension( Dimension.X, 10 )
-				.addVariable( Variable.TIME, DataType.DOUBLE, new String[] { Dimension.TIME } )
-				.addVariableAttribute( Variable.TIME, VariableAttribute.KEY_NAME, "time" )
-				.addVariableAttribute( Variable.TIME, VariableAttribute.KEY_NAME_LONG, "time" )
-				.addVariableAttribute( Variable.TIME, VariableAttribute.KEY_UNITS, VariableAttribute.UNITS_TIME )
-				.addVariableAttribute( Variable.TIME, VariableAttribute.KEY_AXIS, VariableAttribute.AXIS_TIME )
-				.addVariable( Variable.Y, DataType.DOUBLE, new String[] { Dimension.Y } )
-				.addVariableAttribute( Variable.Y, VariableAttribute.KEY_NAME, VariableAttribute.COORDINATES_Y_WGS84 )
-				.addVariableAttribute( Variable.Y, VariableAttribute.KEY_NAME_LONG, VariableAttribute.NAME_Y_WGS84 )
-				.addVariableAttribute( Variable.Y, VariableAttribute.KEY_UNITS, VariableAttribute.UNITS_Y_WGS84 )
-				.addVariableAttribute( Variable.Y, VariableAttribute.KEY_AXIS, VariableAttribute.AXIS_Y )
-				.addVariableAttribute( Variable.Y, VariableAttribute.KEY_MISSINGVALUE,
+				.addDimension( DimensionName.TIME, 10 )
+				.addDimension( DimensionName.Y, 10 )
+				.addDimension( DimensionName.X, 10 )
+				.addVariable( VariableName.TIME, DataType.DOUBLE, new String[] { DimensionName.TIME } )
+				.addVariableAttribute( VariableName.TIME, VariableAttribute.KEY_NAME, "time" )
+				.addVariableAttribute( VariableName.TIME, VariableAttribute.KEY_NAME_LONG, "time" )
+				.addVariableAttribute( VariableName.TIME, VariableAttribute.KEY_UNITS, VariableAttribute.UNITS_TIME )
+				.addVariableAttribute( VariableName.TIME, VariableAttribute.KEY_AXIS, VariableAttribute.AXIS_TIME )
+				.addVariable( VariableName.Y, DataType.DOUBLE, new String[] { DimensionName.Y } )
+				.addVariableAttribute( VariableName.Y, VariableAttribute.KEY_NAME, VariableAttribute.COORDINATES_Y_WGS84 )
+				.addVariableAttribute( VariableName.Y, VariableAttribute.KEY_NAME_LONG, VariableAttribute.NAME_Y_WGS84 )
+				.addVariableAttribute( VariableName.Y, VariableAttribute.KEY_UNITS, VariableAttribute.UNITS_Y_WGS84 )
+				.addVariableAttribute( VariableName.Y, VariableAttribute.KEY_AXIS, VariableAttribute.AXIS_Y )
+				.addVariableAttribute( VariableName.Y, VariableAttribute.KEY_MISSINGVALUE,
 						VariableAttribute.MISSINGVALUE_COORDINATES )
-				.addVariable( Variable.X, DataType.DOUBLE, new String[] { Dimension.X } )
-				.addVariableAttribute( Variable.X, VariableAttribute.KEY_NAME, VariableAttribute.COORDINATES_X_WGS84 )
-				.addVariableAttribute( Variable.X, VariableAttribute.KEY_NAME_LONG, VariableAttribute.NAME_X_WGS84 )
-				.addVariableAttribute( Variable.X, VariableAttribute.KEY_UNITS, VariableAttribute.UNITS_X_WGS84 )
-				.addVariableAttribute( Variable.X, VariableAttribute.KEY_AXIS, VariableAttribute.AXIS_X )
-				.addVariableAttribute( Variable.X, VariableAttribute.KEY_MISSINGVALUE,
+				.addVariable( VariableName.X, DataType.DOUBLE, new String[] { DimensionName.X } )
+				.addVariableAttribute( VariableName.X, VariableAttribute.KEY_NAME, VariableAttribute.COORDINATES_X_WGS84 )
+				.addVariableAttribute( VariableName.X, VariableAttribute.KEY_NAME_LONG, VariableAttribute.NAME_X_WGS84 )
+				.addVariableAttribute( VariableName.X, VariableAttribute.KEY_UNITS, VariableAttribute.UNITS_X_WGS84 )
+				.addVariableAttribute( VariableName.X, VariableAttribute.KEY_AXIS, VariableAttribute.AXIS_X )
+				.addVariableAttribute( VariableName.X, VariableAttribute.KEY_MISSINGVALUE,
 						VariableAttribute.MISSINGVALUE_COORDINATES )
-				.addVariable( "rainfall", DataType.FLOAT, new String[] { Dimension.TIME, Dimension.Y, Dimension.X } )
+				.addVariable( "rainfall", DataType.FLOAT, new String[] { DimensionName.TIME, DimensionName.Y, DimensionName.X } )
 				.addVariableAttribute( "rainfall", VariableAttribute.KEY_NAME_LONG, "Rainfall" )
 				.addVariableAttribute( "rainfall", VariableAttribute.KEY_UNITS, "mm" )
 				.addVariableAttribute( "rainfall", VariableAttribute.KEY_MISSINGVALUE, VariableAttribute.MISSINGVALUE )
 				.build() // Finished NetCDF file structures define mode
-				.writeValues( Variable.TIME, this.valueMap.get( Dimension.TIME ) )
-				.writeValues( Variable.Y, this.valueMap.get( Dimension.Y ) )
-				.writeValues( Variable.X, this.valueMap.get( Dimension.X ) )
+				.writeValues( VariableName.TIME, this.valueMap.get( DimensionName.TIME ) )
+				.writeValues( VariableName.Y, this.valueMap.get( DimensionName.Y ) )
+				.writeValues( VariableName.X, this.valueMap.get( DimensionName.X ) )
 				.writeValues( "rainfall", this.valueMap.get( "rainfall" ) )
 				.close(); // close IO
 	}

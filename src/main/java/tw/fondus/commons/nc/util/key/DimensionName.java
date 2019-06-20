@@ -6,7 +6,7 @@ package tw.fondus.commons.nc.util.key;
  * @author Brad Chen
  * @since 0.7.0
  */
-public class Dimension {
+public class DimensionName {
 	public static final String TIME = "time";
 	public static final String X = "x";
 	public static final String Y = "y";

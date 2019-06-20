@@ -6,7 +6,7 @@ package tw.fondus.commons.nc.util.key;
  * @author Brad Chen
  * @since 0.7.0
  */
-public class Variable {
+public class VariableName {
 	public static final String TIME = "time";
 	public static final String LAT = "lat";
 	public static final String LON = "lon";
