@@ -7,8 +7,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import tw.fondus.commons.nc.NetCDFReader;
-import tw.fondus.commons.nc.util.CommonsUtils;
 import tw.fondus.commons.util.file.PathUtils;
 
 /**
@@ -29,28 +27,41 @@ public class NetCDFReaderTest {
 	}
 	
 	@Test
-	public void test() throws Exception {
+	public void testCommons() throws Exception {
 		try ( NetCDFReader reader = NetCDFReader.read( this.url );){
+			Assert.assertTrue( reader.isWGS84() );
+			Assert.assertTrue( reader.hasTime() );
+			Assert.assertTrue( reader.is2D() );
+			Assert.assertTrue( !reader.is1D() );
+		}
+	}
+	
+	@Test
+	public void testRead() throws Exception {
+		try ( NetCDFReader reader = NetCDFReader.read( this.url );){
+			/** Get All **/
 			Assert.assertTrue( !reader.getGlobalAttributes().isEmpty() );
-			reader.getGlobalAttributes().forEach( att -> {
-				System.out.println( att.getShortName() + "\t" + att.getStringValue() );
-			} );
-			
 			Assert.assertTrue( !reader.getDimensions().isEmpty() );
-			reader.getDimensions().forEach( dimension -> {
-				System.out.println( dimension.getFullName() );
-				System.out.println( dimension.getLength() );
-			} );
-			
 			Assert.assertTrue( !reader.getVariables().isEmpty() );
-			reader.getVariables().forEach( variable -> {
-				System.out.println( CommonsUtils.getVariableType( variable ) );
-			} );
 			
+			/** Find **/
 			Assert.assertTrue( reader.findGlobalAttribute( "references" ).isPresent() );
 			Assert.assertTrue( reader.findDimension( "time" ).isPresent() );
 			Assert.assertTrue( reader.findVariable( "precipitation_radar" ).isPresent() );
+			
+			/** Has **/
+			Assert.assertTrue( reader.hasGlobalAttribute( "references" ) );
+			Assert.assertTrue( reader.hasDimension( "time" ) );
+			Assert.assertTrue( reader.hasVariable( "x" ) );
+			Assert.assertTrue( reader.hasVariable( "y" ) );
+			Assert.assertTrue( reader.hasVariable( "precipitation_radar" ) );
+			
+			/** Read **/
+			Assert.assertTrue( reader.readVariable( "time" ).isPresent() );
+			Assert.assertTrue( reader.readVariable( "x" ).isPresent() );
+			Assert.assertTrue( reader.readVariable( "y" ).isPresent() );
+			Assert.assertTrue( reader.readVariable( "precipitation_radar" ).isPresent() );
+			Assert.assertTrue( reader.findTimes().size() > 0 );
 		}
 	}
-
 }

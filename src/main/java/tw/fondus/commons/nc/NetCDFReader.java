@@ -1,12 +1,17 @@
 package tw.fondus.commons.nc;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.IntStream;
 
 import com.google.common.base.Preconditions;
 
-import tw.fondus.commons.nc.util.CommonsUtils;
+import tw.fondus.commons.nc.util.NetCDFUtils;
+import tw.fondus.commons.nc.util.key.DimensionName;
+import tw.fondus.commons.nc.util.key.VariableName;
 import ucar.ma2.Array;
 import ucar.ma2.DataType;
 import ucar.ma2.InvalidRangeException;
@@ -23,6 +28,8 @@ import ucar.nc2.dataset.NetcdfDataset;
  *
  */
 public class NetCDFReader implements AutoCloseable {
+	private static final String MESSAGE_CANT_OPEN = "The NetCDF file can't be open.";
+	private static final String MESSAGE_NOT_OPEN = "The NetCDF file not open yet!";
 	private Optional<NetcdfFile> optNetCDF;
 	
 	/**
@@ -52,7 +59,8 @@ public class NetCDFReader implements AutoCloseable {
 	 * @since 0.7.0
 	 */
 	public static NetCDFReader read( String path ) throws IOException {
-		Preconditions.checkState( NetcdfDataset.canOpen( path ), "The NetCDF file can't be open." );
+		Preconditions.checkNotNull( path );
+		Preconditions.checkState( NetcdfDataset.canOpen( path ), MESSAGE_CANT_OPEN );
 		return new NetCDFReader( NetcdfDataset.openFile( path, null ) );
 	}
 	
@@ -65,7 +73,8 @@ public class NetCDFReader implements AutoCloseable {
 	 * @since 0.7.0
 	 */
 	public static NetCDFReader readDataset( String path ) throws IOException {
-		Preconditions.checkState( NetcdfDataset.canOpen( path ), "The NetCDF file can't be open." );
+		Preconditions.checkNotNull( path );
+		Preconditions.checkState( NetcdfDataset.canOpen( path ), MESSAGE_CANT_OPEN );
 		return new NetCDFReader( NetcdfDataset.openDataset( path ) );
 	}
 	
@@ -73,9 +82,10 @@ public class NetCDFReader implements AutoCloseable {
 	 * Get the bottom API of NetCDF.
 	 * 
 	 * @return
+	 * @since 0.7.0
 	 */
 	public NetcdfFile getNetCDF() {
-		return this.orElseThrow( this.optNetCDF );
+		return this.orElseThrow( this.optNetCDF, MESSAGE_NOT_OPEN );
 	}
 
 	/**
@@ -86,7 +96,7 @@ public class NetCDFReader implements AutoCloseable {
 	 */
 	@Deprecated
 	public void open( String path ) throws IOException {
-		Preconditions.checkState( NetcdfDataset.canOpen( path ), "The NetCDF file can't be open." );
+		Preconditions.checkState( NetcdfDataset.canOpen( path ), MESSAGE_CANT_OPEN );
 
 		this.optNetCDF = Optional.ofNullable( NetcdfDataset.openFile( path, null ) );
 	}
@@ -99,7 +109,7 @@ public class NetCDFReader implements AutoCloseable {
 	 */
 	@Deprecated
 	public void openDataSet( String path ) throws IOException {
-		Preconditions.checkState( NetcdfDataset.canOpen( path ), "The NetCDF data set can't be open." );
+		Preconditions.checkState( NetcdfDataset.canOpen( path ), MESSAGE_CANT_OPEN );
 
 		this.optNetCDF = Optional.ofNullable( NetcdfDataset.openDataset( path ) );
 	}
@@ -110,7 +120,7 @@ public class NetCDFReader implements AutoCloseable {
 	 */
 	@Deprecated
 	public void print() {
-		Preconditions.checkState( this.optNetCDF.isPresent(), "The NetCDF not open yet!" );
+		Preconditions.checkState( this.optNetCDF.isPresent(), MESSAGE_NOT_OPEN );
 
 		this.optNetCDF.ifPresent( nc -> {
 			System.out.println( nc.toString() );
@@ -118,30 +128,101 @@ public class NetCDFReader implements AutoCloseable {
 	}
 
 	/**
-	 * Get all global attributes.
+	 * Get all global attributes from NetCDF.
 	 * 
 	 * @return
 	 */
 	public List<Attribute> getGlobalAttributes() {
-		return this.orElseThrow( this.optNetCDF.map( nc -> nc.getGlobalAttributes() ) );
+		return this.orElseThrow( this.optNetCDF.map( nc -> nc.getGlobalAttributes() ), MESSAGE_NOT_OPEN );
 	}
 
 	/**
-	 * Get all dimensions.
+	 * Get all dimensions from NetCDF.
 	 * 
 	 * @return
 	 */
 	public List<Dimension> getDimensions() {
-		return this.orElseThrow( this.optNetCDF.map( nc -> nc.getDimensions() ) );
+		return this.orElseThrow( this.optNetCDF.map( nc -> nc.getDimensions() ), MESSAGE_NOT_OPEN );
 	}
 
 	/**
-	 * Get all variables.
+	 * Get all variables from NetCDF.
 	 * 
 	 * @return
 	 */
 	public List<Variable> getVariables() {
-		return this.orElseThrow( this.optNetCDF.map( nc -> nc.getVariables() ) );
+		return this.orElseThrow( this.optNetCDF.map( nc -> nc.getVariables() ), MESSAGE_NOT_OPEN );
+	}
+	
+	/**
+	 * Find the global attribute from NetCDF.
+	 * 
+	 * @param id
+	 * @return
+	 * @since 0.7.0
+	 */
+	public Optional<Attribute> findGlobalAttribute( String id ){
+		Preconditions.checkNotNull( id );
+		return this.validFileOpened( nc -> nc.findGlobalAttribute( id ) );
+	}
+	
+	/**
+	 * Find the dimension from NetCDF.
+	 * 
+	 * @param id
+	 * @since 0.7.0
+	 */
+	public Optional<Dimension> findDimension( String id ) {
+		Preconditions.checkNotNull( id );
+		return this.validFileOpened( nc -> nc.findDimension( id ) );
+	}
+	
+	/**
+	 * Find the variable from NetCDF.
+	 * 
+	 * @param id
+	 * @return
+	 * @since 0.7.0
+	 */
+	public Optional<Variable> findVariable( String id ){
+		Preconditions.checkNotNull( id );
+		return this.validFileOpened( nc -> nc.findVariable( id ) );
+	}
+	
+	/**
+	 * Find the time variable values from the NetCDF file with default minute parameter. <br/>
+	 * If NetCDF not contain time variable, will return empty list.
+	 * 
+	 * @return
+	 */
+	public List<Long> findTimes(){
+		return findTimes( 60000 );
+	}
+	
+	/**
+	 * Find the time variable values from the NetCDF file with specified time parameter. <br/>
+	 * If NetCDF not contain time variable, will return empty list.
+	 * 
+	 * @param parameter
+	 * @return
+	 */
+	public List<Long> findTimes( long parameter ){
+		List<Long> times = new ArrayList<>();
+		this.findVariable( VariableName.TIME )
+			.ifPresent( variable -> {
+				try {
+					Array array = variable.read();
+					IntStream.range( 0, (int) array.getSize() )
+						.mapToObj( i -> array.getLong( i ) * parameter )
+						.forEach( time -> {
+							times.add( time );
+						} );
+					
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			} );
+		return times;
 	}
 	
 	/**
@@ -153,7 +234,8 @@ public class NetCDFReader implements AutoCloseable {
 	 * @throws InvalidRangeException
 	 */
 	public Optional<Array> readVariable( String id ) {
-		return this.optNetCDF.map( nc -> {
+		Preconditions.checkNotNull( id );
+		return this.validFileOpened( nc -> {
 			try {
 				return nc.readSection( id );
 			} catch (IOException e) {
@@ -166,20 +248,76 @@ public class NetCDFReader implements AutoCloseable {
 	}
 	
 	/**
-	 * Get type of variable. <br/>
-	 * Deprecated, change to use {@link CommonsUtils#getVariableType(Variable)}.
+	 * Check the NetCDF has global attribute.
 	 * 
-	 * @param variable
+	 * @param id
 	 * @return
 	 */
-	@Deprecated
-	public DataType getVariableType( Variable variable ){
-		return variable.getDataType();
+	public boolean hasGlobalAttribute( String id ) {
+		return this.findGlobalAttribute( id ).isPresent();
+	}
+	
+	/**
+	 * Check the NetCDF has dimension.
+	 * 
+	 * @param id
+	 * @return
+	 */
+	public boolean hasDimension( String id ) {
+		return this.findDimension( id ).isPresent();
+	}
+	
+	/**
+	 * Check the NetCDF has variable.
+	 * 
+	 * @param id
+	 * @return
+	 */
+	public boolean hasVariable( String id ) {
+		return this.findVariable( id ).isPresent();
+	}
+	
+	/**
+	 * Check the NetCDF has time dimension.
+	 * 
+	 * @return
+	 */
+	public boolean hasTime() {
+		return this.hasDimension( DimensionName.TIME );
+	}
+	
+	/**
+	 * Check the NetCDF is two dimension file.
+	 * 
+	 * @param reader
+	 * @return
+	 */
+	public boolean is2D() {
+		return ( this.hasDimension( DimensionName.X ) && this.hasDimension( DimensionName.Y ) ) ||
+				( this.hasDimension( DimensionName.COL ) && this.hasDimension( DimensionName.ROW ) );
+	}
+	
+	/**
+	 * Check the NetCDF is one dimension file.
+	 * 
+	 * @return
+	 */
+	public boolean is1D() {
+		return this.hasDimension( DimensionName.STATION ) && !this.is2D() ;
+	}
+	
+	/**
+	 * Check the NetCDF coordinate system is WGS84.
+	 * 
+	 * @return
+	 */
+	public boolean isWGS84() {
+		return !this.hasVariable( VariableName.LAT );
 	}
 	
 	@Override
 	public String toString() {
-		return this.orElseThrow( this.optNetCDF.map( nc -> nc.toString() ) );
+		return this.orElseThrow( this.optNetCDF.map( nc -> nc.toString() ), MESSAGE_NOT_OPEN );
 	}
 
 	@Override
@@ -194,12 +332,42 @@ public class NetCDFReader implements AutoCloseable {
 	}
 	
 	/**
-	 * The process or else throw exception.
+	 * Get type of variable. <br/>
+	 * Deprecated, change to use {@link NetCDFUtils#getVariableType(Variable)}.
 	 * 
-	 * @param opt
+	 * @param variable
 	 * @return
 	 */
-	private <T> T orElseThrow( Optional<T> opt ) {
-		return opt.orElseThrow( () -> new NetCDFException( "The NetCDF not open yet!" ) );
+	@Deprecated
+	public DataType getVariableType( Variable variable ){
+		return variable.getDataType();
+	}
+	
+	/**
+	 * The process valid the file is open, if true then apply mapper. <br/>
+	 * Otherwise throw the message of not open yet.
+	 * 
+	 * @param mapper
+	 * @return
+	 * @since 0.7.0
+	 */
+	private <T> Optional<T> validFileOpened( Function<NetcdfFile, T> mapper ) {
+		if ( this.optNetCDF.isPresent() ) {
+			return this.optNetCDF.map( mapper );
+		} else {
+			throw new NetCDFException( MESSAGE_NOT_OPEN );
+		}
+	}
+	
+	/**
+	 * The process or else throw exception with message.
+	 * 
+	 * @param opt
+	 * @param message
+	 * @return
+	 * @since 0.7.0
+	 */
+	private <T> T orElseThrow( Optional<T> opt, String message ) {
+		return opt.orElseThrow( () -> new NetCDFException( message ) );
 	}
 }
