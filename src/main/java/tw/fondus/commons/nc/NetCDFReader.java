@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Function;
 import java.util.stream.IntStream;
 
 import com.google.common.base.Preconditions;
@@ -27,9 +26,7 @@ import ucar.nc2.dataset.NetcdfDataset;
  * @author Brad Chen
  *
  */
-public class NetCDFReader implements AutoCloseable {
-	private static final String MESSAGE_CANT_OPEN = "The NetCDF file can't be open.";
-	private static final String MESSAGE_NOT_OPEN = "The NetCDF file not open yet!";
+public class NetCDFReader extends AbstractReader {
 	private Optional<NetcdfFile> optNetCDF;
 	
 	/**
@@ -163,7 +160,8 @@ public class NetCDFReader implements AutoCloseable {
 	 */
 	public Optional<Attribute> findGlobalAttribute( String id ){
 		Preconditions.checkNotNull( id );
-		return this.validFileOpened( nc -> nc.findGlobalAttribute( id ) );
+		return this.validFileOpened( this.optNetCDF,
+				nc -> nc.findGlobalAttribute( id ) );
 	}
 	
 	/**
@@ -174,7 +172,8 @@ public class NetCDFReader implements AutoCloseable {
 	 */
 	public Optional<Dimension> findDimension( String id ) {
 		Preconditions.checkNotNull( id );
-		return this.validFileOpened( nc -> nc.findDimension( id ) );
+		return this.validFileOpened( this.optNetCDF,
+				nc -> nc.findDimension( id ) );
 	}
 	
 	/**
@@ -186,7 +185,8 @@ public class NetCDFReader implements AutoCloseable {
 	 */
 	public Optional<Variable> findVariable( String id ){
 		Preconditions.checkNotNull( id );
-		return this.validFileOpened( nc -> nc.findVariable( id ) );
+		return this.validFileOpened( this.optNetCDF,
+				nc -> nc.findVariable( id ) );
 	}
 	
 	/**
@@ -230,21 +230,20 @@ public class NetCDFReader implements AutoCloseable {
 	 * 
 	 * @param id
 	 * @return
-	 * @throws IOException
-	 * @throws InvalidRangeException
 	 */
 	public Optional<Array> readVariable( String id ) {
 		Preconditions.checkNotNull( id );
-		return this.validFileOpened( nc -> {
-			try {
-				return nc.readSection( id );
-			} catch (IOException e) {
-				e.printStackTrace();
-			} catch (InvalidRangeException e) {
-				e.printStackTrace();
-			}
-			return null;
-		} );
+		return this.validFileOpened( this.optNetCDF,
+				nc -> {
+					try {
+						return nc.readSection( id );
+					} catch (IOException e) {
+						e.printStackTrace();
+					} catch (InvalidRangeException e) {
+						e.printStackTrace();
+					}
+					return null;
+				} );
 	}
 	
 	/**
@@ -341,33 +340,5 @@ public class NetCDFReader implements AutoCloseable {
 	@Deprecated
 	public DataType getVariableType( Variable variable ){
 		return variable.getDataType();
-	}
-	
-	/**
-	 * The process valid the file is open, if true then apply mapper. <br/>
-	 * Otherwise throw the message of not open yet.
-	 * 
-	 * @param mapper
-	 * @return
-	 * @since 0.7.0
-	 */
-	private <T> Optional<T> validFileOpened( Function<NetcdfFile, T> mapper ) {
-		if ( this.optNetCDF.isPresent() ) {
-			return this.optNetCDF.map( mapper );
-		} else {
-			throw new NetCDFException( MESSAGE_NOT_OPEN );
-		}
-	}
-	
-	/**
-	 * The process or else throw exception with message.
-	 * 
-	 * @param opt
-	 * @param message
-	 * @return
-	 * @since 0.7.0
-	 */
-	private <T> T orElseThrow( Optional<T> opt, String message ) {
-		return opt.orElseThrow( () -> new NetCDFException( message ) );
 	}
 }
