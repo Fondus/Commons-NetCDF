@@ -7,7 +7,7 @@ The Commons-NetCDF Library comes in two flavors.
 - The **UCAR unidata NetCDF Java library** flavor requires **4.6.10** or higher.
 
 ## Examples and basic usage
-Please have a look at the fully examples:  [Unit test DEMO](src/test/java/tw/fondus/commons/nc/util/NetCDFBuilderTest.java)
+Please have a look at the fully examples:  [Unit test DEMO](src/test/java/tw/fondus/commons/nc/NetCDFBuilderTest.java)
 
 Basic usage:
 ```java
