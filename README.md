@@ -6,7 +6,9 @@ The Commons-NetCDF Library comes in two flavors.
 - The JRE flavor requires **JDK 1.8** or higher.
 - The **UCAR unidata NetCDF Java library** flavor requires **4.6.10** or higher.
 
-## Examples and basic usage
+## Examples
+
+### Builder
 Please have a look at the fully examples:  [Unit test DEMO](src/test/java/tw/fondus/commons/nc/NetCDFBuilderTest.java)
 
 Basic usage:
@@ -38,6 +40,18 @@ Basic usage:
     .writeValues( VariableName.X, this.valueMap.get( DimensionName.X ))
     .writeValues("rainfall", this.valueMap.get("rainfall"))
     .close(); // close IO
+```
+
+### Reader
+Please have a look at the fully examples:  [Unit test DEMO](src/test/java/tw/fondus/commons/nc/NetCDFReaderTest.java)
+
+Basic usage:
+```java
+try ( NetCDFReader reader = NetCDFReader.read( "src/test/resources/QPESUMS_QPE.nc" ); ){
+	reader.findDimension( "time" ).ifPresent( dimension -> {
+		// To do with dimension
+	});
+}
 ```
 
 ## License
