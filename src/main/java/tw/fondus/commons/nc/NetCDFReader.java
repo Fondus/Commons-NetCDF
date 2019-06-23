@@ -180,17 +180,6 @@ public class NetCDFReader extends AbstractReader {
 	}
 	
 	/**
-	 * Find the time variable values from the NetCDF file with default minute parameter. <br/>
-	 * If NetCDF not contain time variable, will return empty list.
-	 * 
-	 * @return
-	 * @since 0.7.0
-	 */
-	public List<Long> findTimes(){
-		return findTimes( 60000 );
-	}
-	
-	/**
 	 * Find the time variable values from the NetCDF file with specified time parameter. <br/>
 	 * If NetCDF not contain time variable, will return empty list.
 	 * 
