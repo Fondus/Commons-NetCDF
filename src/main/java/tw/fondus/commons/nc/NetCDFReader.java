@@ -75,14 +75,14 @@ public class NetCDFReader extends AbstractReader {
 		return new NetCDFReader( NetcdfDataset.openDataset( path ) );
 	}
 	
-	/**
-	 * Get the bottom API of NetCDF.
-	 * 
-	 * @return
-	 * @since 0.7.0
-	 */
+	@Override
 	public NetcdfFile getNetCDF() {
 		return this.orElseThrow( this.optNetCDF, MESSAGE_NOT_OPEN );
+	}
+	
+	@Override
+	public String getPath() {
+		return this.orElseThrow( this.optNetCDF.map( nc -> nc.getLocation() ), MESSAGE_NOT_OPEN );
 	}
 
 	/**
@@ -124,11 +124,7 @@ public class NetCDFReader extends AbstractReader {
 		} );
 	}
 
-	/**
-	 * Get all global attributes from NetCDF.
-	 * 
-	 * @return
-	 */
+	@Override
 	public List<Attribute> getGlobalAttributes() {
 		return this.orElseThrow( this.optNetCDF.map( nc -> nc.getGlobalAttributes() ), MESSAGE_NOT_OPEN );
 	}
@@ -151,13 +147,7 @@ public class NetCDFReader extends AbstractReader {
 		return this.orElseThrow( this.optNetCDF.map( nc -> nc.getVariables() ), MESSAGE_NOT_OPEN );
 	}
 	
-	/**
-	 * Find the global attribute from NetCDF.
-	 * 
-	 * @param id
-	 * @return
-	 * @since 0.7.0
-	 */
+	@Override
 	public Optional<Attribute> findGlobalAttribute( String id ){
 		Preconditions.checkNotNull( id );
 		return this.validFileOpened( this.optNetCDF,
@@ -194,6 +184,7 @@ public class NetCDFReader extends AbstractReader {
 	 * If NetCDF not contain time variable, will return empty list.
 	 * 
 	 * @return
+	 * @since 0.7.0
 	 */
 	public List<Long> findTimes(){
 		return findTimes( 60000 );
@@ -205,6 +196,7 @@ public class NetCDFReader extends AbstractReader {
 	 * 
 	 * @param parameter
 	 * @return
+	 * @since 0.7.0
 	 */
 	public List<Long> findTimes( long parameter ){
 		List<Long> times = new ArrayList<>();
@@ -247,20 +239,11 @@ public class NetCDFReader extends AbstractReader {
 	}
 	
 	/**
-	 * Check the NetCDF has global attribute.
-	 * 
-	 * @param id
-	 * @return
-	 */
-	public boolean hasGlobalAttribute( String id ) {
-		return this.findGlobalAttribute( id ).isPresent();
-	}
-	
-	/**
 	 * Check the NetCDF has dimension.
 	 * 
 	 * @param id
 	 * @return
+	 * @since 0.7.0
 	 */
 	public boolean hasDimension( String id ) {
 		return this.findDimension( id ).isPresent();
@@ -271,6 +254,7 @@ public class NetCDFReader extends AbstractReader {
 	 * 
 	 * @param id
 	 * @return
+	 * @since 0.7.0
 	 */
 	public boolean hasVariable( String id ) {
 		return this.findVariable( id ).isPresent();
@@ -280,6 +264,7 @@ public class NetCDFReader extends AbstractReader {
 	 * Check the NetCDF has time dimension.
 	 * 
 	 * @return
+	 * @since 0.7.0
 	 */
 	public boolean hasTime() {
 		return this.hasDimension( DimensionName.TIME );
@@ -290,6 +275,7 @@ public class NetCDFReader extends AbstractReader {
 	 * 
 	 * @param reader
 	 * @return
+	 * @since 0.7.0
 	 */
 	public boolean is2D() {
 		return ( this.hasDimension( DimensionName.X ) && this.hasDimension( DimensionName.Y ) ) ||
@@ -300,6 +286,7 @@ public class NetCDFReader extends AbstractReader {
 	 * Check the NetCDF is one dimension file.
 	 * 
 	 * @return
+	 * @since 0.7.0
 	 */
 	public boolean is1D() {
 		return this.hasDimension( DimensionName.STATION ) && !this.is2D() ;
@@ -309,6 +296,7 @@ public class NetCDFReader extends AbstractReader {
 	 * Check the NetCDF coordinate system is WGS84.
 	 * 
 	 * @return
+	 * @since 0.7.0
 	 */
 	public boolean isWGS84() {
 		return !this.hasVariable( VariableName.LAT );
