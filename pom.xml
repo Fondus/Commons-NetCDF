@@ -5,7 +5,7 @@
 
 	<groupId>tw.fondus.commons</groupId>
 	<artifactId>commons-netcdf</artifactId>
-	<version>0.6.5</version>
+	<version>0.7.0</version>
 	<packaging>jar</packaging>
 
 	<name>The Commons-NetCDF Library</name>
