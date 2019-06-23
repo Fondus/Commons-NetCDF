@@ -7,6 +7,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import tw.fondus.commons.nc.util.TimeFactor;
 import tw.fondus.commons.util.file.PathUtils;
 
 /**
@@ -61,7 +62,7 @@ public class NetCDFReaderTest {
 			Assert.assertTrue( reader.readVariable( "x" ).isPresent() );
 			Assert.assertTrue( reader.readVariable( "y" ).isPresent() );
 			Assert.assertTrue( reader.readVariable( "precipitation_radar" ).isPresent() );
-			Assert.assertTrue( reader.findTimes().size() > 0 );
+			Assert.assertTrue( reader.findTimes( TimeFactor.ARCHIVE ).size() > 0 );
 		}
 	}
 }
