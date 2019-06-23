@@ -5,7 +5,7 @@
 
 	<groupId>tw.fondus.commons</groupId>
 	<artifactId>commons-netcdf</artifactId>
-	<version>0.6.5</version>
+	<version>0.7.0</version>
 	<packaging>jar</packaging>
 
 	<name>The Commons-NetCDF Library</name>
@@ -66,6 +66,18 @@
 					<groupId>joda-time</groupId>
 					<artifactId>joda-time</artifactId>
 				</exclusion>
+				<exclusion>
+					<groupId>com.google.guava</groupId>
+					<artifactId>guava</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<!-- GRIB -->
+		<dependency>
+			<groupId>edu.ucar</groupId>
+			<artifactId>grib</artifactId>
+			<version>${netcdf.version}</version>
+			<exclusions>
 				<exclusion>
 					<groupId>com.google.guava</groupId>
 					<artifactId>guava</artifactId>

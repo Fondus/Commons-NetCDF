@@ -7,6 +7,7 @@ package tw.fondus.commons.nc.util.key;
  *
  */
 public class VariableAttribute {
+	/** Key **/
 	public static final String KEY_NAME = "standard_name";
 	public static final String KEY_NAME_LONG = "long_name";
 	public static final String KEY_UNITS = "units";
@@ -16,6 +17,7 @@ public class VariableAttribute {
 	public static final String KEY_SCALE = "scale_factor";
 	public static final String KEY_OFFSET = "add_offset";
 	
+	/** Value **/
 	public static final float MISSINGVALUE = -9999;
 	public static final double MISSINGVALUE_COORDINATES = 9.96921E36;
 	public static final String COORDINATES_Y = "projection_y_coordinate";
