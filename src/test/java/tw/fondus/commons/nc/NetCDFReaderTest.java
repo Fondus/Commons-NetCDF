@@ -1,5 +1,6 @@
 package tw.fondus.commons.nc;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -8,7 +9,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import tw.fondus.commons.nc.util.TimeFactor;
-import tw.fondus.commons.util.file.PathUtils;
 
 /**
  * The unit test of NerCDF reader.
@@ -19,12 +19,12 @@ import tw.fondus.commons.util.file.PathUtils;
 public class NetCDFReaderTest {
 	private final String url = "src/test/resources/QPESUMS_QPE.nc";
 	private Path path;
-	
+
 	@Before
 	public void setUp() throws Exception {
 		this.path = Paths.get( this.url );
 
-		Assert.assertTrue( PathUtils.exists( this.path ) );
+		Assert.assertTrue( Files.exists( this.path ) );
 	}
 	
 	@Test

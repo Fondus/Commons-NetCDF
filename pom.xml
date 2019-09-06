@@ -38,7 +38,6 @@
 		<netcdf.version>4.6.11</netcdf.version>
 		<guava.version>23.4-jre</guava.version>
 		<junit.version>4.12</junit.version>
-		<commons.utils.version>0.8.5</commons.utils.version>
 	</properties>
 
 	<repositories>
@@ -102,13 +101,6 @@
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>${junit.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<!-- Commons-Utils -->
-		<dependency>
-			<groupId>tw.fondus.commons</groupId>
-			<artifactId>commons-utils</artifactId>
-			<version>${commons.utils.version}</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

@@ -13,12 +13,10 @@ import org.junit.Before;
 import org.junit.Test;
 
 import strman.Strman;
-import tw.fondus.commons.nc.NetCDFBuilder;
 import tw.fondus.commons.nc.util.key.DimensionName;
 import tw.fondus.commons.nc.util.key.GlobalAttribute;
-import tw.fondus.commons.nc.util.key.VariableName;
 import tw.fondus.commons.nc.util.key.VariableAttribute;
-import tw.fondus.commons.util.time.TimeUtils;
+import tw.fondus.commons.nc.util.key.VariableName;
 import ucar.ma2.Array;
 import ucar.ma2.ArrayDouble;
 import ucar.ma2.ArrayFloat;
@@ -88,13 +86,13 @@ public class NetCDFBuilderTest {
 				.addGlobalAttribute( GlobalAttribute.INSTITUTION, "FondUS" )
 				.addGlobalAttribute( GlobalAttribute.SOURCE, "Export NETCDF-CF_GRID from FEWS-Taiwan" )
 				.addGlobalAttribute( GlobalAttribute.HISTORY,
-						Strman.append( TimeUtils.toString( createTime, TimeUtils.YMDHMS ),
+						Strman.append( createTime.toString(),
 								" GMT: exported from FEWS-Taiwan" ) )
 				.addGlobalAttribute( GlobalAttribute.REFERENCES, "http://www.delft-fews.com" )
 				.addGlobalAttribute( GlobalAttribute.METADATA_CONVENTIONS, "Unidata Dataset Discovery v1.0" )
 				.addGlobalAttribute( GlobalAttribute.SUMMARY, "Data exported from FEWS-Taiwan" )
 				.addGlobalAttribute( GlobalAttribute.DATE_CREATE,
-						Strman.append( TimeUtils.toString( createTime, TimeUtils.YMDHMS ), " GMT" ) )
+						Strman.append( createTime.toString(), " GMT" ) )
 				.addDimension( DimensionName.TIME, 10 )
 				.addDimension( DimensionName.Y, 10 )
 				.addDimension( DimensionName.X, 10 )

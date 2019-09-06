@@ -2,6 +2,7 @@ package tw.fondus.commons.nc.util;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -11,7 +12,6 @@ import org.junit.Test;
 
 import tw.fondus.commons.nc.NetCDFReader;
 import tw.fondus.commons.nc.util.key.VariableAttribute;
-import tw.fondus.commons.util.file.PathUtils;
 import ucar.ma2.Array;
 import ucar.ma2.Index;
 
@@ -29,7 +29,7 @@ public class NetCDFUtilsTest {
 	public void setUp() throws Exception {
 		this.path = Paths.get( this.url );
 
-		Assert.assertTrue( PathUtils.exists( this.path ) );
+		Assert.assertTrue( Files.exists( this.path ) );
 	}
 	
 	@Test
