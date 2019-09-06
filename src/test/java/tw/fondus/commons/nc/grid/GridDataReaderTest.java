@@ -1,13 +1,12 @@
 package tw.fondus.commons.nc.grid;
 
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-
-import tw.fondus.commons.util.file.PathUtils;
 
 /**
  * The unit test of grid data set reader.
@@ -23,7 +22,7 @@ public class GridDataReaderTest {
 	public void setUp() throws Exception {
 		this.path = Paths.get( this.url );
 
-		Assert.assertTrue( PathUtils.exists( this.path ) );
+		Assert.assertTrue( Files.exists( this.path ) );
 	}
 	
 	@Test
