@@ -60,3 +60,5 @@ Desktop.ini
 .AppleDouble
 .LSOverride
 Icon
+/src/test/resources/*.gbx9
+/src/test/resources/gfs.t00z.pgrb2.0p25.anl.ncx3
