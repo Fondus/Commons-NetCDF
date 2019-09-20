@@ -1,6 +1,5 @@
 # Local configuration file (sdk path, etc)
 
-
 # Compiled class file
 *.class
 
@@ -62,3 +61,4 @@ Desktop.ini
 Icon
 /src/test/resources/*.gbx9
 /src/test/resources/gfs.t00z.pgrb2.0p25.anl.ncx3
+test.nc
