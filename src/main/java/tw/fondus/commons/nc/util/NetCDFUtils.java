@@ -27,7 +27,7 @@ public class NetCDFUtils {
 	 * Avoid the constructor.
 	 */
 	private NetCDFUtils() {}
-	
+
 	/**
 	 * Read the string variable values.
 	 * 
@@ -57,6 +57,20 @@ public class NetCDFUtils {
 	public static DataType getVariableType( Variable variable ){
 		Preconditions.checkNotNull( variable, "NetCDFUtils: variable" );
 		return variable.getDataType();
+	}
+
+	/**
+	 * Read the attribute from variable, if not found then return other.
+	 *
+	 * @param variable
+	 * @param key
+	 * @param other
+	 * @return
+	 */
+	public static String readVariableAttribute( Variable variable, String key, String other ){
+		Preconditions.checkNotNull( variable, "NetCDFUtils: variable" );
+		Preconditions.checkNotNull( key, "NetCDFUtils: key" );
+		return Optional.ofNullable( variable.findAttribute( key ) ).map( attribute -> attribute.getStringValue() ).orElse( other );
 	}
 	
 	/**
