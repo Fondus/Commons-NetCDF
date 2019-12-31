@@ -1,15 +1,9 @@
 package tw.fondus.commons.nc;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.IntStream;
-
 import com.google.common.base.Preconditions;
-
 import tw.fondus.commons.nc.util.NetCDFUtils;
 import tw.fondus.commons.nc.util.key.DimensionName;
+import tw.fondus.commons.nc.util.key.VariableAttribute;
 import tw.fondus.commons.nc.util.key.VariableName;
 import ucar.ma2.Array;
 import ucar.ma2.DataType;
@@ -19,6 +13,12 @@ import ucar.nc2.Dimension;
 import ucar.nc2.NetcdfFile;
 import ucar.nc2.Variable;
 import ucar.nc2.dataset.NetcdfDataset;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.IntStream;
 
 /**
  * NetCDF reader which contains API to to avoid the null point with read NetCDF.
@@ -288,7 +288,11 @@ public class NetCDFReader extends AbstractReader {
 	 * @since 0.7.0
 	 */
 	public boolean isWGS84() {
-		return !this.hasVariable( VariableName.LAT );
+		return this.hasVariable( VariableName.LAT ) ||
+				this.findVariable( VariableName.X )
+						.map( variable -> NetCDFUtils.readVariableAttribute( variable, VariableAttribute.KEY_NAME_LONG, "" ) )
+						.map( attribute -> attribute.contains( VariableAttribute.NAME_X_WGS84 ) )
+						.orElse( false );
 	}
 	
 	@Override
