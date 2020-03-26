@@ -3,7 +3,7 @@
 
 	<groupId>tw.fondus.commons</groupId>
 	<artifactId>commons-netcdf</artifactId>
-	<version>0.7.2</version>
+	<version>1.0.0</version>
 	<packaging>jar</packaging>
 
 	<name>The Commons-NetCDF Library</name>
@@ -39,11 +39,11 @@
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<string.version>0.4.0</string.version>
-		<slf4j.version>1.7.25</slf4j.version>
-		<jodatime.version>2.9.9</jodatime.version>
-		<netcdf.version>4.6.11</netcdf.version>
-		<guava.version>23.4-jre</guava.version>
-		<junit.version>4.12</junit.version>
+		<slf4j.version>1.7.30</slf4j.version>
+		<jodatime.version>2.10.5</jodatime.version>
+		<netcdf.version>4.6.14</netcdf.version>
+		<guava.version>28.2-jre</guava.version>
+		<junit.version>4.13</junit.version>
 	</properties>
 
 	<repositories>
@@ -121,6 +121,19 @@
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>${junit.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<!-- Log4J for Test -->
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-core</artifactId>
+			<version>2.13.0</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-slf4j-impl</artifactId>
+			<version>2.13.0</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

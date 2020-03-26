@@ -1,11 +1,11 @@
 package tw.fondus.commons.nc;
 
+import ucar.nc2.Attribute;
+import ucar.nc2.NetcdfFile;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
-
-import ucar.nc2.Attribute;
-import ucar.nc2.NetcdfFile;
 
 /**
  * Abstract reader which contains API to to avoid the null point.
@@ -20,37 +20,37 @@ public abstract class AbstractReader implements AutoCloseable {
 	/**
 	 * Get the file location. This is a URL, or a file path.
 	 * 
-	 * @return
+	 * @return is a URL, or a file path
 	 */
 	public abstract String getPath();
 	
 	/**
 	 * Get the bottom API of NetCDF.
 	 * 
-	 * @return
+	 * @return bottom NetCDF
 	 */
 	public abstract NetcdfFile getNetCDF();
 	
 	/**
 	 * Get all global attributes from bottom.
 	 * 
-	 * @return
+	 * @return list of global attribute
 	 */
 	public abstract List<Attribute> getGlobalAttributes();
 	
 	/**
 	 * Find the global attribute from bottom.
 	 * 
-	 * @param id
-	 * @return
+	 * @param id id of global attribute
+	 * @return global attribute, it's optional
 	 */
 	public abstract Optional<Attribute> findGlobalAttribute( String id );
 	
 	/**
 	 * Check the NetCDF has global attribute.
 	 * 
-	 * @param id
-	 * @return
+	 * @param id id of global attribute
+	 * @return has global attribute or not
 	 */
 	public boolean hasGlobalAttribute( String id ) {
 		return this.findGlobalAttribute( id ).isPresent();
@@ -60,9 +60,9 @@ public abstract class AbstractReader implements AutoCloseable {
 	 * The process valid the file is open, if true then apply mapper. <br/>
 	 * Otherwise throw the message of not open yet.
 	 * 
-	 * @param optEntity
-	 * @param mapper
-	 * @return
+	 * @param optEntity entity instance, it's optional
+	 * @param mapper entity mapper
+	 * @return mapped type of entity, it's optional
 	 */
 	protected <T, U> Optional<U> validFileOpened( Optional<T> optEntity, Function<T, U> mapper ) {
 		if ( optEntity.isPresent() ) {
@@ -75,9 +75,9 @@ public abstract class AbstractReader implements AutoCloseable {
 	/**
 	 * The process or else throw exception with message.
 	 * 
-	 * @param opt
-	 * @param message
-	 * @return
+	 * @param opt optional
+	 * @param message error message
+	 * @return optional value
 	 */
 	protected <T> T orElseThrow( Optional<T> opt, String message ) {
 		return opt.orElseThrow( () -> new NetCDFException( message ) );

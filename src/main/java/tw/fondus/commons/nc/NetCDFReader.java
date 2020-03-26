@@ -6,7 +6,6 @@ import tw.fondus.commons.nc.util.key.DimensionName;
 import tw.fondus.commons.nc.util.key.VariableAttribute;
 import tw.fondus.commons.nc.util.key.VariableName;
 import ucar.ma2.Array;
-import ucar.ma2.DataType;
 import ucar.ma2.InvalidRangeException;
 import ucar.nc2.Attribute;
 import ucar.nc2.Dimension;
@@ -15,6 +14,7 @@ import ucar.nc2.Variable;
 import ucar.nc2.dataset.NetcdfDataset;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -28,31 +28,35 @@ import java.util.stream.IntStream;
  */
 public class NetCDFReader extends AbstractReader {
 	private Optional<NetcdfFile> optNetCDF;
-	
-	/**
-	 * Deprecated at version 0.7.0.
-	 */
-	@Deprecated
-	public NetCDFReader() {
-		this( null );
-	}
-	
+
 	/**
 	 * The constructor.
 	 * 
-	 * @param netcdf
+	 * @param netcdf netcdf
 	 * @since 0.7.0
 	 */
 	private NetCDFReader( NetcdfFile netcdf ) {
 		this.optNetCDF = Optional.ofNullable( netcdf );
 	}
-	
+
+	/**
+	 * Open the NetCDF with reader.
+	 *
+	 * @param path string of file location
+	 * @return reader
+	 * @throws IOException has IO Exception
+	 * @since 1.0.0
+	 */
+	public static NetCDFReader read( Path path ) throws IOException {
+		return read( path.toString() );
+	}
+
 	/**
 	 * Open the NetCDF with reader.
 	 * 
-	 * @param path
-	 * @return
-	 * @throws IOException
+	 * @param path string of file location
+	 * @return reader
+	 * @throws IOException has IO Exception
 	 * @since 0.7.0
 	 */
 	public static NetCDFReader read( String path ) throws IOException {
@@ -64,9 +68,9 @@ public class NetCDFReader extends AbstractReader {
 	/**
 	 * Open the data set through the netCDF API, with reader.
 	 * 
-	 * @param path
-	 * @return
-	 * @throws IOException
+	 * @param path string of file location
+	 * @return reader
+	 * @throws IOException has IO Exception
 	 * @since 0.7.0
 	 */
 	public static NetCDFReader readDataset( String path ) throws IOException {
@@ -82,69 +86,41 @@ public class NetCDFReader extends AbstractReader {
 	
 	@Override
 	public String getPath() {
-		return this.orElseThrow( this.optNetCDF.map( nc -> nc.getLocation() ), MESSAGE_NOT_OPEN );
-	}
-
-	/**
-	 * Open the local NetCDF file.
-	 * 
-	 * @param path
-	 * @throws IOException
-	 */
-	@Deprecated
-	public void open( String path ) throws IOException {
-		Preconditions.checkState( NetcdfDataset.canOpen( path ), MESSAGE_CANT_OPEN );
-
-		this.optNetCDF = Optional.ofNullable( NetcdfDataset.openFile( path, null ) );
-	}
-
-	/**
-	 * Open the remote NetCDF data set.
-	 * 
-	 * @param path
-	 * @throws IOException
-	 */
-	@Deprecated
-	public void openDataSet( String path ) throws IOException {
-		Preconditions.checkState( NetcdfDataset.canOpen( path ), MESSAGE_CANT_OPEN );
-
-		this.optNetCDF = Optional.ofNullable( NetcdfDataset.openDataset( path ) );
-	}
-
-	/**
-	 * Print NetCDF meta-information. <br/>
-	 * Deprecated, use the {@link #toString()}.
-	 */
-	@Deprecated
-	public void print() {
-		Preconditions.checkState( this.optNetCDF.isPresent(), MESSAGE_NOT_OPEN );
-
-		this.optNetCDF.ifPresent( nc -> {
-			System.out.println( nc.toString() );
-		} );
+		return this.orElseThrow( this.optNetCDF.map( NetcdfFile::getLocation ), MESSAGE_NOT_OPEN );
 	}
 
 	@Override
 	public List<Attribute> getGlobalAttributes() {
-		return this.orElseThrow( this.optNetCDF.map( nc -> nc.getGlobalAttributes() ), MESSAGE_NOT_OPEN );
+		return this.orElseThrow( this.optNetCDF.map( NetcdfFile::getGlobalAttributes ), MESSAGE_NOT_OPEN );
 	}
 
 	/**
 	 * Get all dimensions from NetCDF.
 	 * 
-	 * @return
+	 * @return list of dimension
 	 */
 	public List<Dimension> getDimensions() {
-		return this.orElseThrow( this.optNetCDF.map( nc -> nc.getDimensions() ), MESSAGE_NOT_OPEN );
+		return this.orElseThrow( this.optNetCDF.map( NetcdfFile::getDimensions ), MESSAGE_NOT_OPEN );
 	}
 
 	/**
 	 * Get all variables from NetCDF.
 	 * 
-	 * @return
+	 * @return list of variable
 	 */
 	public List<Variable> getVariables() {
-		return this.orElseThrow( this.optNetCDF.map( nc -> nc.getVariables() ), MESSAGE_NOT_OPEN );
+		return this.orElseThrow( this.optNetCDF.map( NetcdfFile::getVariables ), MESSAGE_NOT_OPEN );
+	}
+
+	/**
+	 * Get the length of dimension.
+	 *
+	 * @param id id of dimension
+	 * @return length of dimension
+	 * @since 1.0.0
+	 */
+	public int getDimensionLength( String id ){
+		return this.findDimension( id ).map( dimension -> dimension.getLength() ).orElse( 0 );
 	}
 	
 	@Override
@@ -157,7 +133,8 @@ public class NetCDFReader extends AbstractReader {
 	/**
 	 * Find the dimension from NetCDF.
 	 * 
-	 * @param id
+	 * @param id id of dimension
+	 * @return dimension, it's optional
 	 * @since 0.7.0
 	 */
 	public Optional<Dimension> findDimension( String id ) {
@@ -169,8 +146,8 @@ public class NetCDFReader extends AbstractReader {
 	/**
 	 * Find the variable from NetCDF.
 	 * 
-	 * @param id
-	 * @return
+	 * @param id id of variable
+	 * @return variable, it's optional
 	 * @since 0.7.0
 	 */
 	public Optional<Variable> findVariable( String id ){
@@ -178,29 +155,37 @@ public class NetCDFReader extends AbstractReader {
 		return this.validFileOpened( this.optNetCDF,
 				nc -> nc.findVariable( id ) );
 	}
+
+	/**
+	 * Find the time variable values from the NetCDF file with default time factor. <br/>
+	 * If NetCDF not contain time variable, will return empty list.
+	 *
+	 * @return list of time value
+	 * @since 1.0.0
+	 */
+	public List<Long> findTimes(){
+		return findTimes( 1 );
+	}
 	
 	/**
-	 * Find the time variable values from the NetCDF file with specified time parameter. <br/>
+	 * Find the time variable values from the NetCDF file with specified time factor. <br/>
 	 * If NetCDF not contain time variable, will return empty list.
 	 * 
-	 * @param parameter
-	 * @return
+	 * @param constFactor time factor
+	 * @return list of time value
 	 * @since 0.7.0
 	 */
-	public List<Long> findTimes( long parameter ){
+	public List<Long> findTimes( long constFactor ){
 		List<Long> times = new ArrayList<>();
 		this.findVariable( VariableName.TIME )
 			.ifPresent( variable -> {
 				try {
 					Array array = variable.read();
 					IntStream.range( 0, (int) array.getSize() )
-						.mapToObj( i -> array.getLong( i ) * parameter )
-						.forEach( time -> {
-							times.add( time );
-						} );
-					
+						.mapToObj( i -> array.getLong( i ) * constFactor )
+						.forEach( time -> times.add( time ) );
 				} catch (IOException e) {
-					e.printStackTrace();
+					// nothing to do
 				}
 			} );
 		return times;
@@ -209,8 +194,8 @@ public class NetCDFReader extends AbstractReader {
 	/**
 	 * Read variable value.
 	 * 
-	 * @param id
-	 * @return
+	 * @param id id of variable
+	 * @return array values of variable, it's optional
 	 */
 	public Optional<Array> readVariable( String id ) {
 		Preconditions.checkNotNull( id );
@@ -218,10 +203,8 @@ public class NetCDFReader extends AbstractReader {
 				nc -> {
 					try {
 						return nc.readSection( id );
-					} catch (IOException e) {
-						e.printStackTrace();
-					} catch (InvalidRangeException e) {
-						e.printStackTrace();
+					} catch (IOException | InvalidRangeException e) {
+						// nothing to do
 					}
 					return null;
 				} );
@@ -230,8 +213,8 @@ public class NetCDFReader extends AbstractReader {
 	/**
 	 * Check the NetCDF has dimension.
 	 * 
-	 * @param id
-	 * @return
+	 * @param id id of dimension
+	 * @return has dimension or not
 	 * @since 0.7.0
 	 */
 	public boolean hasDimension( String id ) {
@@ -241,8 +224,8 @@ public class NetCDFReader extends AbstractReader {
 	/**
 	 * Check the NetCDF has variable.
 	 * 
-	 * @param id
-	 * @return
+	 * @param id id of variable
+	 * @return has variable or not
 	 * @since 0.7.0
 	 */
 	public boolean hasVariable( String id ) {
@@ -252,7 +235,7 @@ public class NetCDFReader extends AbstractReader {
 	/**
 	 * Check the NetCDF has time dimension.
 	 * 
-	 * @return
+	 * @return has time
 	 * @since 0.7.0
 	 */
 	public boolean hasTime() {
@@ -261,9 +244,8 @@ public class NetCDFReader extends AbstractReader {
 	
 	/**
 	 * Check the NetCDF is two dimension file.
-	 * 
-	 * @param reader
-	 * @return
+	 *
+	 * @return is 2D file
 	 * @since 0.7.0
 	 */
 	public boolean is2D() {
@@ -274,17 +256,17 @@ public class NetCDFReader extends AbstractReader {
 	/**
 	 * Check the NetCDF is one dimension file.
 	 * 
-	 * @return
+	 * @return is 1D file
 	 * @since 0.7.0
 	 */
 	public boolean is1D() {
-		return this.hasDimension( DimensionName.STATION ) && !this.is2D() ;
+		return this.hasDimension( DimensionName.STATION ) || !this.is2D() ;
 	}
 	
 	/**
 	 * Check the NetCDF coordinate system is WGS84.
 	 * 
-	 * @return
+	 * @return is WGS84
 	 * @since 0.7.0
 	 */
 	public boolean isWGS84() {
@@ -297,29 +279,17 @@ public class NetCDFReader extends AbstractReader {
 	
 	@Override
 	public String toString() {
-		return this.orElseThrow( this.optNetCDF.map( nc -> nc.toString() ), MESSAGE_NOT_OPEN );
+		return this.orElseThrow( this.optNetCDF.map( NetcdfFile::toString ), MESSAGE_NOT_OPEN );
 	}
 
 	@Override
-	public void close() throws Exception {
+	public void close() {
 		this.optNetCDF.ifPresent( nc -> {
 			try {
 				nc.close();
 			} catch (IOException e) {
-				e.printStackTrace();
+				// nothing to do
 			}
 		} );
-	}
-	
-	/**
-	 * Get type of variable. <br/>
-	 * Deprecated, change to use {@link NetCDFUtils#getVariableType(Variable)}.
-	 * 
-	 * @param variable
-	 * @return
-	 */
-	@Deprecated
-	public DataType getVariableType( Variable variable ){
-		return variable.getDataType();
 	}
 }

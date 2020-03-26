@@ -14,4 +14,6 @@ public class VariableName {
 	public static final String Y = "y";
 	public static final String ID_STATION = "station_id";
 	public static final String NAME_STATION = "station_names";
+
+	private VariableName(){}
 }

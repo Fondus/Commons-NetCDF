@@ -1,11 +1,6 @@
 package tw.fondus.commons.nc.grid;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Optional;
-
 import com.google.common.base.Preconditions;
-
 import tw.fondus.commons.nc.AbstractReader;
 import ucar.nc2.Attribute;
 import ucar.nc2.NetcdfFile;
@@ -15,6 +10,10 @@ import ucar.nc2.dt.GridDatatype;
 import ucar.nc2.dt.grid.GridDataset;
 import ucar.nc2.time.CalendarDate;
 import ucar.unidata.geoloc.LatLonRect;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Grid data reader which contains some API to avoid the null point with read grids with geo referencing coordinate systems only.
@@ -32,20 +31,19 @@ public class GridDataReader extends AbstractReader {
 	/**
 	 * Open the file contain grid type data with reader.
 	 * 
-	 * @param path
-	 * @return
-	 * @throws IOException
+	 * @param path string of file location
+	 * @return reader
+	 * @throws IOException has IO Exception
 	 */
 	public static GridDataReader read( String path ) throws IOException {
 		Preconditions.checkState( NetcdfDataset.canOpen( path ), MESSAGE_CANT_OPEN );
-		
 		return new GridDataReader( GridDataset.open( path ) );
 	}
 	
 	/**
 	 * Get the bottom API of GridDataset.
 	 * 
-	 * @return
+	 * @return data set
 	 */
 	public GridDataset getDataset() {
 		return this.orElseThrow( this.optGrid, MESSAGE_NOT_OPEN );
@@ -69,7 +67,7 @@ public class GridDataReader extends AbstractReader {
 	/**
 	 * Get the list of grid data type from grid data.
 	 * 
-	 * @return
+	 * @return list of grid data type
 	 */
 	public List<GridDatatype> getGridDataTypes() {
 		return this.orElseThrow( this.optGrid.map( dataset -> dataset.getGrids() ), MESSAGE_NOT_OPEN );
@@ -78,7 +76,7 @@ public class GridDataReader extends AbstractReader {
 	/**
 	 * Get the list of variable from grid data.
 	 * 
-	 * @return
+	 * @return list of variable
 	 */
 	public List<VariableSimpleIF> getVariables() {
 		return this.orElseThrow( this.optGrid.map( dataset -> dataset.getDataVariables() ), MESSAGE_NOT_OPEN );
@@ -87,7 +85,7 @@ public class GridDataReader extends AbstractReader {
 	/**
 	 * Get boundingBox for the entire dataset.
 	 * 
-	 * @return
+	 * @return bounding box, it's optional
 	 */
 	public Optional<LatLonRect> getBoundingBox() {
 		return this.validFileOpened( this.optGrid,
@@ -95,9 +93,9 @@ public class GridDataReader extends AbstractReader {
 	}
 	
 	/**
-	 * Get start Calendar date for the entire dataset.
+	 * Get start calendar date for the entire dataset.
 	 * 
-	 * @return
+	 * @return start calendar date, it's optional
 	 */
 	public Optional<CalendarDate> getDateStart() {
 		return this.validFileOpened( this.optGrid,
@@ -105,9 +103,9 @@ public class GridDataReader extends AbstractReader {
 	}
 	
 	/**
-	 * Get ending Calendar date for the entire dataset.
+	 * Get end calendar date for the entire dataset.
 	 * 
-	 * @return
+	 * @return end calendar date, it's optional
 	 */
 	public Optional<CalendarDate> getDateEnd() {
 		return this.validFileOpened( this.optGrid,
@@ -124,8 +122,8 @@ public class GridDataReader extends AbstractReader {
 	/**
 	 * Find the grid data type from data set.
 	 * 
-	 * @param id
-	 * @return
+	 * @param id id of grid data type
+	 * @return grid data type, it's optional
 	 */
 	public Optional<GridDatatype> findGridDataType( String id ){
 		Preconditions.checkNotNull( id );
@@ -136,8 +134,8 @@ public class GridDataReader extends AbstractReader {
 	/**
 	 * Find the variable from data set.
 	 * 
-	 * @param id
-	 * @return
+	 * @param id id of variable
+	 * @return variable, it's optional
 	 */
 	public Optional<VariableSimpleIF> findVariable( String id ){
 		Preconditions.checkNotNull( id );
@@ -148,8 +146,8 @@ public class GridDataReader extends AbstractReader {
 	/**
 	 * Check the has grid data type or not.
 	 * 
-	 * @param id
-	 * @return
+	 * @param id id of grid data type
+	 * @return has grid data type or not
 	 */
 	public boolean hasGridDataType( String id ) {
 		return this.findGridDataType( id ).isPresent();
@@ -158,8 +156,8 @@ public class GridDataReader extends AbstractReader {
 	/**
 	 * Check the has variable or not.
 	 * 
-	 * @param id
-	 * @return
+	 * @param id id of variable
+	 * @return has variable or not
 	 */
 	public boolean hasVariable( String id ) {
 		return this.findVariable( id ).isPresent();
@@ -171,12 +169,12 @@ public class GridDataReader extends AbstractReader {
 	}
 	
 	@Override
-	public void close() throws Exception {
+	public void close() {
 		this.optGrid.ifPresent( dataSet -> {
 			try {
 				dataSet.close();
 			} catch (IOException e) {
-				e.printStackTrace();
+				// nothing to do
 			}
 		} );
 	}

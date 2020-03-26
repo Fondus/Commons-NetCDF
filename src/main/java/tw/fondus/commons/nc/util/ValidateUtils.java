@@ -1,11 +1,12 @@
 package tw.fondus.commons.nc.util;
 
-import java.util.Optional;
-
 import com.google.common.base.Preconditions;
-
 import strman.Strman;
+import ucar.nc2.Attribute;
 import ucar.nc2.NetcdfFileWriter;
+import ucar.nc2.Variable;
+
+import java.util.Optional;
 
 /**
  * Validate NetCDF structures, such like global attribute, dimension, variable.
@@ -18,7 +19,7 @@ public class ValidateUtils {
 	/**
 	 * Validate is define mode or not.
 	 * 
-	 * @param writer
+	 * @param writer netcdf writer
 	 */
 	public static void validateDefine( NetcdfFileWriter writer ) {
 		Preconditions.checkState( writer.isDefineMode(), "The NetCDF file not in define mode." );
@@ -27,57 +28,54 @@ public class ValidateUtils {
 	/**
 	 * Validate has global attribute or not.
 	 * 
-	 * @param writer
-	 * @param name
-	 * @param notHas
+	 * @param writer netcdf writer
+	 * @param name global attribute name
+	 * @param notHas check not has or not
 	 */
 	public static void validateGlobalAttribute( NetcdfFileWriter writer, String name, boolean notHas ) {
-		validateProcess( writer.findGlobalAttribute( name ), "global attribute", name, notHas );
+		Optional<Attribute> optional = Optional.ofNullable( writer.findGlobalAttribute( name ) );
+		validateProcess( !optional.isPresent(), optional.isPresent(), "global attribute", name, notHas );
 	}
 
 	/**
 	 * Validate has dimension or not.
 	 * 
-	 * @param writer
-	 * @param name
-	 * @param notHas
+	 * @param writer netcdf writer
+	 * @param name dimension name
+	 * @param notHas check not has or not
 	 */
 	public static void validateDimension( NetcdfFileWriter writer, String name, boolean notHas ) {
-		if ( notHas ) {
-			Preconditions.checkState( !writer.hasDimension( null, name ),
-					Strman.append( "This NetCDF has the dimension: ", name, " already!" ) );
-		} else {
-			Preconditions.checkState( writer.hasDimension( null, name ),
-					Strman.append( "This NetCDF hasn't the dimension: ", name, "." ) );
-		}
+		validateProcess( !writer.hasDimension( null, name ), writer.hasDimension( null, name ), "dimension", name, notHas );
 	}
 
 	/**
 	 * Validate has variable or not.
 	 * 
-	 * @param writer
-	 * @param name
-	 * @param notHas
+	 * @param writer netcdf writer
+	 * @param name variable name
+	 * @param notHas check not has or not
 	 */
 	public static void validateVariable( NetcdfFileWriter writer, String name, boolean notHas ) {
-		validateProcess( writer.findVariable( name ), "variable", name, notHas );
+		Optional<Variable> optional = Optional.ofNullable( writer.findVariable( name ) );
+		validateProcess( !optional.isPresent(), optional.isPresent(), "variable", name, notHas );
 	}
 
 	/**
 	 * Validate process of has type or not.
-	 * 
-	 * @param instance
-	 * @param type
-	 * @param name
-	 * @param notHas
+	 *
+	 * @param notHasCondition not has condition
+	 * @param hasCondition has condition
+	 * @param type check type
+	 * @param name check name
+	 * @param notHas check not has or not
+	 * @since 1.0.0
 	 */
-	private static <T> void validateProcess( T instance, String type, String name, boolean notHas ) {
-		Optional<T> opt = Optional.ofNullable( instance );
+	private static void validateProcess( boolean notHasCondition, boolean hasCondition, String type, String name, boolean notHas ) {
 		if ( notHas ) {
-			Preconditions.checkState( !opt.isPresent(),
+			Preconditions.checkState( notHasCondition,
 					Strman.append( "This NetCDF has the ", type, ": ", name, " already!" ) );
 		} else {
-			Preconditions.checkState( opt.isPresent(),
+			Preconditions.checkState( hasCondition,
 					Strman.append( "This NetCDF hasn't the ", type, ": ", name, "." ) );
 		}
 	}

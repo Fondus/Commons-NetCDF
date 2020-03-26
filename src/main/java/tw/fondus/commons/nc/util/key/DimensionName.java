@@ -15,4 +15,6 @@ public class DimensionName {
 	public static final String COL = "col";
 	public static final String ROW = "row";
 	public static final String STATION = "stations";
+
+	private DimensionName(){}
 }
