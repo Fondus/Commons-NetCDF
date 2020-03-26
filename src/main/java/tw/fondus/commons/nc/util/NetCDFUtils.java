@@ -1,7 +1,6 @@
 package tw.fondus.commons.nc.util;
 
 import com.google.common.base.Preconditions;
-import strman.Strman;
 import tw.fondus.commons.nc.util.key.VariableAttribute;
 import ucar.ma2.Array;
 import ucar.ma2.ArrayChar;
@@ -419,6 +418,6 @@ public class NetCDFUtils {
 	 * @since 1.0.0
 	 */
 	private static String buildNotNullMessage( String target ){
-		return Strman.append( "NetCDFUtils: ", target, " should not be null." );
+		return new StringBuilder().append( "NetCDFUtils: " ).append( target ).append(" should not be null."  ).toString();
 	}
 }
