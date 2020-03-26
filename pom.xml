@@ -38,7 +38,6 @@
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<string.version>0.4.0</string.version>
 		<slf4j.version>1.7.30</slf4j.version>
 		<jodatime.version>2.10.5</jodatime.version>
 		<netcdf.version>4.6.14</netcdf.version>
@@ -55,12 +54,6 @@
 	</repositories>
 
 	<dependencies>
-		<!-- Strman -->
-		<dependency>
-			<groupId>com.shekhargulati</groupId>
-			<artifactId>strman</artifactId>
-			<version>${string.version}</version>
-		</dependency>
 		<!-- Slf4J -->
 		<dependency>
 			<groupId>org.slf4j</groupId>

@@ -3,7 +3,6 @@ package tw.fondus.commons.nc;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
-import strman.Strman;
 import tw.fondus.commons.nc.util.key.DimensionName;
 import tw.fondus.commons.nc.util.key.GlobalAttribute;
 import tw.fondus.commons.nc.util.key.VariableAttribute;
@@ -77,11 +76,11 @@ public class NetCDFBuilderTest {
 				.addGlobalAttribute( GlobalAttribute.TITLE, "Test Data" )
 				.addGlobalAttribute( GlobalAttribute.INSTITUTION, "FondUS" )
 				.addGlobalAttribute( GlobalAttribute.SOURCE, "Export NETCDF-CF_GRID from FEWS-Taiwan" )
-				.addGlobalAttribute( GlobalAttribute.HISTORY, Strman.append( createTime.toString(), " GMT: exported from FEWS-Taiwan" ) )
+				.addGlobalAttribute( GlobalAttribute.HISTORY, createTime.toString() + " GMT: exported from FEWS-Taiwan" )
 				.addGlobalAttribute( GlobalAttribute.REFERENCES, "http://www.delft-fews.com" )
 				.addGlobalAttribute( GlobalAttribute.METADATA_CONVENTIONS, "Unidata Dataset Discovery v1.0" )
 				.addGlobalAttribute( GlobalAttribute.SUMMARY, "Data exported from FEWS-Taiwan" )
-				.addGlobalAttribute( GlobalAttribute.DATE_CREATE, Strman.append( createTime.toString(), " GMT" ) )
+				.addGlobalAttribute( GlobalAttribute.DATE_CREATE, createTime.toString() + " GMT" )
 				.addDimension( DimensionName.TIME, 10 )
 				.addDimension( DimensionName.Y, 10 )
 				.addDimension( DimensionName.X, 10 )

@@ -1,7 +1,6 @@
 package tw.fondus.commons.nc.util;
 
 import com.google.common.base.Preconditions;
-import strman.Strman;
 import ucar.nc2.Attribute;
 import ucar.nc2.NetcdfFileWriter;
 import ucar.nc2.Variable;
@@ -72,11 +71,9 @@ public class ValidateUtils {
 	 */
 	private static void validateProcess( boolean notHasCondition, boolean hasCondition, String type, String name, boolean notHas ) {
 		if ( notHas ) {
-			Preconditions.checkState( notHasCondition,
-					Strman.append( "This NetCDF has the ", type, ": ", name, " already!" ) );
+			Preconditions.checkState( notHasCondition, "This NetCDF has the " + type + ": " + name + " already!" );
 		} else {
-			Preconditions.checkState( hasCondition,
-					Strman.append( "This NetCDF hasn't the ", type, ": ", name, "." ) );
+			Preconditions.checkState( hasCondition, "This NetCDF hasn't the " + type + ": " + name + "." );
 		}
 	}
 }
