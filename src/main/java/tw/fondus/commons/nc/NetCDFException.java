@@ -9,11 +9,11 @@ package tw.fondus.commons.nc;
 public class NetCDFException extends RuntimeException {
 	private static final long serialVersionUID = 1L;
 	
-	public NetCDFException(String message) {
-        this(message, null);
+	public NetCDFException( String message ) {
+        this( message, null );
     }
 
-    public NetCDFException(String message, Throwable cause) {
-        super(message, cause);
+    public NetCDFException( String message, Throwable cause ) {
+        super( message, cause );
     }
 }

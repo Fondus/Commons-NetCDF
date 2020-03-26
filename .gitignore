@@ -1,4 +1,5 @@
 # Local configuration file (sdk path, etc)
+test.nc
 
 # Compiled class file
 *.class

@@ -17,4 +17,6 @@ public class GlobalAttribute {
 	public static final String SUMMARY = "summary";
 	public static final String DATE_CREATE = "date_created";
 	public static final String COMMENT = "comment";
+
+	private GlobalAttribute(){}
 }
