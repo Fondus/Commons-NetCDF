@@ -108,7 +108,7 @@ public class NetCDFUtils {
 	 *
 	 * @param values values
 	 * @return 1D short array
-	 * @since 1.0.1
+	 * @since 1.1.0
 	 */
 	public static ArrayShort.D1 create1DArrayShort( List<BigDecimal> values ){
 		Preconditions.checkNotNull( values, buildNotNullMessage( "values" ) );
@@ -122,7 +122,7 @@ public class NetCDFUtils {
 	 *
 	 * @param values values
 	 * @return 1D float array
-	 * @since 1.0.1
+	 * @since 1.1.0
 	 */
 	public static ArrayFloat.D1 create1DArrayFloat( List<BigDecimal> values ){
 		Preconditions.checkNotNull( values, buildNotNullMessage( "values" ) );
@@ -136,7 +136,7 @@ public class NetCDFUtils {
 	 *
 	 * @param values values
 	 * @return 1D double array
-	 * @since 1.0.1
+	 * @since 1.1.0
 	 */
 	public static ArrayDouble.D1 create1DArrayDouble( List<BigDecimal> values ){
 		Preconditions.checkNotNull( values, buildNotNullMessage( "values" ) );
@@ -152,7 +152,7 @@ public class NetCDFUtils {
 	 * @param ySize y dimension size
 	 * @param xSize x dimension size
 	 * @return 3D short array
-	 * @since 1.0.1
+	 * @since 1.1.0
 	 */
 	public static ArrayShort.D3 create3DArrayShort( List<List<BigDecimal>> tyxValues, int ySize, int xSize ){
 		Preconditions.checkNotNull( tyxValues, buildNotNullMessage( "tyxValues" ) );
@@ -172,7 +172,7 @@ public class NetCDFUtils {
 	 * @param ySize y dimension size
 	 * @param xSize x dimension size
 	 * @return 3D float array
-	 * @since 1.0.1
+	 * @since 1.1.0
 	 */
 	public static ArrayFloat.D3 create3DArrayFloat( List<List<BigDecimal>> tyxValues, int ySize, int xSize ){
 		Preconditions.checkNotNull( tyxValues, buildNotNullMessage( "tyxValues" ) );
@@ -192,7 +192,7 @@ public class NetCDFUtils {
 	 * @param ySize y dimension size
 	 * @param xSize x dimension size
 	 * @return 3D double array
-	 * @since 1.0.1
+	 * @since 1.1.0
 	 */
 	public static ArrayDouble.D3 create3DArrayDouble( List<List<BigDecimal>> tyxValues, int ySize, int xSize ){
 		Preconditions.checkNotNull( tyxValues, buildNotNullMessage( "tyxValues" ) );
@@ -210,7 +210,7 @@ public class NetCDFUtils {
 	 *
 	 * @param size size
 	 * @return empty 1D shout array
-	 * @since 1.0.1
+	 * @since 1.1.0
 	 */
 	public static ArrayShort.D1 empty1DArrayShort( int size ){
 		Preconditions.checkArgument( size > 0 );
@@ -222,7 +222,7 @@ public class NetCDFUtils {
 	 *
 	 * @param size size
 	 * @return empty 1D float array
-	 * @since 1.0.1
+	 * @since 1.1.0
 	 */
 	public static ArrayFloat.D1 empty1DArrayFloat( int size ){
 		Preconditions.checkArgument( size > 0 );
@@ -234,7 +234,7 @@ public class NetCDFUtils {
 	 *
 	 * @param size size
 	 * @return empty 1D double array
-	 * @since 1.0.1
+	 * @since 1.1.0
 	 */
 	public static ArrayDouble.D1 empty1DArrayDouble( int size ){
 		Preconditions.checkArgument( size > 0 );
@@ -248,7 +248,7 @@ public class NetCDFUtils {
 	 * @param ySize y dimension size
 	 * @param xSize x dimension size
 	 * @return empty 3D short array
-	 * @since 1.0.1
+	 * @since 1.1.0
 	 */
 	public static ArrayShort.D3 empty3DArrayShort( int tSize, int ySize, int xSize ){
 		Preconditions.checkArgument( tSize > 0 && ySize > 0 && xSize > 0 );
@@ -262,7 +262,7 @@ public class NetCDFUtils {
 	 * @param ySize y dimension size
 	 * @param xSize x dimension size
 	 * @return empty 3D float array
-	 * @since 1.0.1
+	 * @since 1.1.0
 	 */
 	public static ArrayFloat.D3 empty3DArrayFloat( int tSize, int ySize, int xSize ){
 		Preconditions.checkArgument( tSize > 0 && ySize > 0 && xSize > 0 );
@@ -276,7 +276,7 @@ public class NetCDFUtils {
 	 * @param ySize y dimension size
 	 * @param xSize x dimension size
 	 * @return empty 3D double array
-	 * @since 1.0.1
+	 * @since 1.1.0
 	 */
 	public static ArrayDouble.D3 empty3DArrayDouble( int tSize, int ySize, int xSize ){
 		Preconditions.checkArgument( tSize > 0 && ySize > 0 && xSize > 0 );
@@ -339,7 +339,6 @@ public class NetCDFUtils {
 		int[] shape = stringVariable.getShape();
 		ArrayChar values = (ArrayChar) stringVariable.read();
 		Index index = values.getIndex();
-
 		return IntStream.range( 0, shape[0] )
 				.mapToObj( i -> values.getString( index.set0( i ) ) )
 				.collect( Collectors.toList() );
@@ -523,21 +522,56 @@ public class NetCDFUtils {
 		int[] shape = values.getShape();
 		if ( shape.length == 3 ){
 			int timeSize = shape[ 0 ];
+			IntStream.range( 0, timeSize ).forEach( time -> timeGrids.add( sliceTDimensionArrayYXValues( values, time, scale, offset, missing ) ) );
+		}
+		return timeGrids;
+	}
+
+	/**
+	 * Slice the Y, X array values at t index from the Time, Y, X three-dimension array with <p>default</> scale, offset factor to original value and missing value, <br/>
+	 * if not is three-dimension array, return empty list.
+	 *
+	 * @param values array values
+	 * @param tIndex t dimension index
+	 * @return list of yx one dimension values
+	 * @since 1.1.0
+	 */
+	public static List<BigDecimal> sliceTDimensionArrayYXValues( Array values, int tIndex ){
+		return sliceTDimensionArrayYXValues( values, tIndex, new BigDecimal( "1" ), BigDecimal.ZERO, VariableAttribute.MISSING );
+	}
+
+	/**
+	 * Slice the Y, X array values at t index from the Time, Y, X three-dimension array with scale, offset factor to original value and missing value, <br/>
+	 * if not is three-dimension array, return empty list.
+	 *
+	 * @param values array values
+	 * @param tIndex t dimension index
+	 * @param scale value scale factor
+	 * @param offset value offset factor
+	 * @param missing missing value
+	 * @return list of yx one dimension values
+	 * @since 1.1.0
+	 */
+	public static List<BigDecimal> sliceTDimensionArrayYXValues( Array values, int tIndex, BigDecimal scale, BigDecimal offset, BigDecimal missing ){
+		Preconditions.checkNotNull( values, buildNotNullMessage( "values" ) );
+		Preconditions.checkNotNull( scale, buildNotNullMessage( "scale" ) );
+		Preconditions.checkNotNull( offset, buildNotNullMessage( "offset" ) );
+		Preconditions.checkNotNull( missing, buildNotNullMessage( "missing" ) );
+		int[] shape = values.getShape();
+		List<BigDecimal> grid = new ArrayList<>();
+		if ( shape.length == 3 ){
+			Preconditions.checkElementIndex( tIndex, shape[ 0 ], "NetCDFUtils: the tIndex should not greater than t dimension size." );
 			int ySize = shape[ 1 ];
 			int xSize = shape[ 2 ];
 			Index index = values.getIndex();
 
-			IntStream.range( 0, timeSize ).forEach( time -> {
-				timeGrids.add( new ArrayList<>() );
-
-				IntStream.range( 0, ySize ).forEach( y -> {
-					IntStream.range( 0, xSize ).forEach( x -> timeGrids.get( time ).add( NetCDFUtils.readArrayValue( values, index.set( time, y, x ), scale, offset, missing ) ) );
-				} );
+			IntStream.range( 0, ySize ).forEach( y -> {
+				IntStream.range( 0, xSize ).forEach( x -> grid.add( NetCDFUtils.readArrayValue( values, index.set( tIndex, y, x ), scale, offset, missing ) ) );
 			} );
 		}
-		return timeGrids;
+		return grid;
 	}
-	
+
 	/**
 	 * Unpack the package value with scale, offset factor to original value, if is missing value, return missing.
 	 * 
@@ -590,7 +624,7 @@ public class NetCDFUtils {
 	 * @param scale value scale factor
 	 * @param offset value offset factor
 	 * @return package value, if is missing value, return missing
-	 * @since 1.0.1
+	 * @since 1.1.0
 	 */
 	public static BigDecimal packageValue( BigDecimal value, BigDecimal scale, BigDecimal offset ) {
 		return packageValue( value, scale, offset, VariableAttribute.MISSING );
@@ -604,7 +638,7 @@ public class NetCDFUtils {
 	 * @param offset value offset factor
 	 * @param missing missing value
 	 * @return package value, if is missing value, return missing
-	 * @since 1.0.1
+	 * @since 1.1.0
 	 */
 	public static BigDecimal packageValue( BigDecimal value, BigDecimal scale, BigDecimal offset, BigDecimal missing ) {
 		Preconditions.checkNotNull( value, buildNotNullMessage( "value" ) );

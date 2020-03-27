@@ -18,7 +18,9 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -43,7 +45,6 @@ public class NetCDFBuilderTest {
 		ArrayDouble.D1 y = NetCDFUtils.create1DArrayDouble( IntStream.range( 0, ySize ).mapToObj( BigDecimal::new ).collect( Collectors.toList() ) );
 		ArrayDouble.D1 x = NetCDFUtils.create1DArrayDouble( IntStream.range( 0, xSize ).mapToObj( BigDecimal::new ).collect( Collectors.toList() ) );
 		ArrayDouble.D1 times = NetCDFUtils.empty1DArrayDouble( tSize );
-		ArrayFloat.D3 rainfall = NetCDFUtils.empty3DArrayFloat( tSize, ySize, xSize );
 
 		// Time
 		DateTime createTime = new DateTime();
@@ -53,13 +54,16 @@ public class NetCDFBuilderTest {
 		} );
 
 		// Rainfall
+		List<List<BigDecimal>> values = new ArrayList<>();
 		IntStream.range( 0, tSize ).forEach( t -> {
+			values.add( new ArrayList<>() );
 			IntStream.range( 0, ySize ).forEach( j -> {
 				IntStream.range( 0, xSize ).forEach( i -> {
-					rainfall.set( t, j, i, (float) Math.random() );
+					values.get( t ).add( new BigDecimal( Math.random() ) );
 				} );
 			} );
 		} );
+		ArrayFloat.D3 rainfall = NetCDFUtils.create3DArrayFloat( values, ySize, xSize );
 
 		this.valueMap = new HashMap<>();
 		this.valueMap.put( DimensionName.X, x );
@@ -72,7 +76,7 @@ public class NetCDFBuilderTest {
 	public void test() throws IOException, InvalidRangeException {
 		DateTime createTime = new DateTime();
 
-		NetCDFBuilder.create( Paths.get( "src/test/resources/test.nc" ))
+		NetCDFBuilder.create( Paths.get( "src/test/resources/test.nc" ) )
 				.addGlobalAttribute( GlobalAttribute.CONVENTIONS, "CF-1.6" )
 				.addGlobalAttribute( GlobalAttribute.TITLE, "Test Data" )
 				.addGlobalAttribute( GlobalAttribute.INSTITUTION, "FondUS" )
