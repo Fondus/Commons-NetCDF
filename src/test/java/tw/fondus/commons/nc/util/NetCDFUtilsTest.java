@@ -34,8 +34,19 @@ public class NetCDFUtilsTest {
 
 	@Test
 	public void testIndex(){
-		Assert.assertEquals( 12, NetCDFUtils.create1DIndex( 3, 3 ) );
+		Assert.assertEquals( 12, NetCDFUtils.create1DIndex( 3, 3, 3 ) );
 		Assert.assertEquals( new int[]{ 3, 2, 1 }[0], NetCDFUtils.createTYXIndex( 3, 2, 1 )[0] );
+	}
+
+	@Test
+	public void testConvertValue(){
+		BigDecimal originalValue = new BigDecimal( "20" );
+		BigDecimal offset = new BigDecimal( "3" );
+		BigDecimal scale = new BigDecimal( "0.01" );
+
+		BigDecimal packageValue = NetCDFUtils.packageValue( originalValue, scale, offset );
+		Assert.assertEquals( 1700, packageValue.shortValue() );
+		Assert.assertTrue( originalValue.compareTo( NetCDFUtils.originalValue( packageValue, scale, offset ) ) == 0 );
 	}
 
 	@Test

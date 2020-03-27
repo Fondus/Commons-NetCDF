@@ -3,6 +3,7 @@ package tw.fondus.commons.nc;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
+import tw.fondus.commons.nc.util.NetCDFUtils;
 import tw.fondus.commons.nc.util.key.DimensionName;
 import tw.fondus.commons.nc.util.key.GlobalAttribute;
 import tw.fondus.commons.nc.util.key.VariableAttribute;
@@ -14,10 +15,12 @@ import ucar.ma2.DataType;
 import ucar.ma2.InvalidRangeException;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 /**
@@ -33,28 +36,26 @@ public class NetCDFBuilderTest {
 	public void prepareData() throws IOException {
 		Files.deleteIfExists( Paths.get( "src/test/resources/test.nc" ) );
 
-		ArrayDouble.D1 y = new ArrayDouble.D1( 10 );
-		ArrayDouble.D1 x = new ArrayDouble.D1( 10 );
-		ArrayDouble.D1 times = new ArrayDouble.D1( 10 );
-		ArrayFloat.D3 rainfall = new ArrayFloat.D3( 10, 10, 10 );
+		int tSize = 10;
+		int ySize = 10;
+		int xSize = 10;
 
-		// Y
-		IntStream.range( 0, 10 ).forEach( i -> y.set( i, i ) );
-
-		// Y
-		IntStream.range( 0, 10 ).forEach( i -> x.set( i, i ) );
+		ArrayDouble.D1 y = NetCDFUtils.create1DArrayDouble( IntStream.range( 0, ySize ).mapToObj( BigDecimal::new ).collect( Collectors.toList() ) );
+		ArrayDouble.D1 x = NetCDFUtils.create1DArrayDouble( IntStream.range( 0, xSize ).mapToObj( BigDecimal::new ).collect( Collectors.toList() ) );
+		ArrayDouble.D1 times = NetCDFUtils.empty1DArrayDouble( tSize );
+		ArrayFloat.D3 rainfall = NetCDFUtils.empty3DArrayFloat( tSize, ySize, xSize );
 
 		// Time
 		DateTime createTime = new DateTime();
-		IntStream.range( 0, 10 ).forEach( i -> {
+		IntStream.range( 0, tSize ).forEach( i -> {
 			long time = createTime.plusHours( i ).getMillis() / (60 * 1000); // milliseconds to minute
 			times.set( i, time );
 		} );
 
 		// Rainfall
-		IntStream.range( 0, 10 ).forEach( t -> {
-			IntStream.range( 0, 10 ).forEach( j -> {
-				IntStream.range( 0, 10 ).forEach( i -> {
+		IntStream.range( 0, tSize ).forEach( t -> {
+			IntStream.range( 0, ySize ).forEach( j -> {
+				IntStream.range( 0, xSize ).forEach( i -> {
 					rainfall.set( t, j, i, (float) Math.random() );
 				} );
 			} );
