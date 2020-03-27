@@ -15,7 +15,9 @@ import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.IntStream;
 
 /**
  * The unit test of NetCDF with tools.
@@ -34,14 +36,51 @@ public class NetCDFUtilsTest {
 
 	@Test
 	public void testIndex(){
-		Assert.assertEquals( 12, NetCDFUtils.create1DIndex( 3, 3 ) );
+		Assert.assertEquals( 12, NetCDFUtils.create1DIndex( 3, 3, 3 ) );
 		Assert.assertEquals( new int[]{ 3, 2, 1 }[0], NetCDFUtils.createTYXIndex( 3, 2, 1 )[0] );
+	}
+
+	@Test
+	public void testConvertValue(){
+		BigDecimal originalValue = new BigDecimal( "20" );
+		BigDecimal offset = new BigDecimal( "3" );
+		BigDecimal scale = new BigDecimal( "0.01" );
+
+		BigDecimal packageValue = NetCDFUtils.packageValue( originalValue, scale, offset );
+		Assert.assertEquals( 1700, packageValue.shortValue() );
+		Assert.assertTrue( originalValue.compareTo( NetCDFUtils.originalValue( packageValue, scale, offset ) ) == 0 );
 	}
 
 	@Test
 	public void testAttribute(){
 		Assert.assertNotNull( NetCDFUtils.createAttribute( "test", "world" ) );
 		Assert.assertNotNull( NetCDFUtils.createAttribute( "test", 0 ) );
+	}
+
+	@Test
+	public void testArray(){
+		Assert.assertNotNull( NetCDFUtils.empty1DArrayDouble( 1 ) );
+		Assert.assertNotNull( NetCDFUtils.empty1DArrayFloat( 1 ) );
+		Assert.assertNotNull( NetCDFUtils.empty1DArrayShort( 1 ) );
+
+		List<BigDecimal> values = new ArrayList<>();
+		IntStream.range( 0, 10 ).forEach( i -> values.add( new BigDecimal( i ) ) );
+		Assert.assertNotNull( NetCDFUtils.create1DArrayFloat( values ) );
+		Assert.assertNotNull( NetCDFUtils.create1DArrayShort( values ) );
+		Assert.assertNotNull( NetCDFUtils.create1DArrayDouble( values ) );
+
+		List<List<BigDecimal>> tyxValues = new ArrayList<>();
+		IntStream.range( 0, 10 ).forEach( t -> {
+			tyxValues.add( new ArrayList<>() );
+			IntStream.range( 0, 12 ).forEach( j -> {
+				IntStream.range( 0, 11 ).forEach( i -> {
+					tyxValues.get( t ).add( new BigDecimal( Math.random() ) );
+				} );
+			} );
+		} );
+		Assert.assertNotNull( NetCDFUtils.create3DArrayFloat( tyxValues, 12, 11 ) );
+		Assert.assertNotNull( NetCDFUtils.create3DArrayShort( tyxValues, 12, 11 ) );
+		Assert.assertNotNull( NetCDFUtils.create3DArrayDouble( tyxValues, 12, 11 ) );
 	}
 
 	@Test
@@ -123,6 +162,21 @@ public class NetCDFUtilsTest {
 					Assert.fail();
 				}
 			} );
+		}
+	}
+
+	@Test
+	public void testSliceTDimensionArrayYXValues() throws IOException {
+		try ( NetCDFReader reader = NetCDFReader.read( this.url ) ){
+			reader.findVariable( "precipitation_radar" ).ifPresent( variable -> {
+				try {
+					Array values = variable.read();
+					List<BigDecimal> yxGrid = NetCDFUtils.sliceTDimensionArrayYXValues( values, 0 );
+					Assert.assertFalse( yxGrid.isEmpty() );
+				} catch (IOException e) {
+					Assert.fail();
+				}
+			});
 		}
 	}
 
