@@ -14,6 +14,7 @@ import ucar.nc2.Variable;
 import ucar.nc2.dataset.NetcdfDataset;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -190,6 +191,38 @@ public class NetCDFReader extends AbstractReader {
 			} );
 		return times;
 	}
+
+	/**
+	 * Read the Y variable first value, it's usually is most bottom value.
+	 *
+	 * @return first y value, it's optional
+	 * @since 1.1.1
+	 */
+	public Optional<BigDecimal> findFirstY(){
+		if ( this.hasDimension( DimensionName.Y ) ) {
+			return this.readFirstValue( VariableName.Y );
+		}
+		if ( this.hasDimension( DimensionName.ROW ) ) {
+			return this.readFirstValue( VariableName.LAT );
+		}
+		return Optional.empty();
+	}
+
+	/**
+	 * Read the X variable first value, it's usually is most left value.
+	 *
+	 * @return first x value, it's optional
+	 * @since 1.1.1
+	 */
+	public Optional<BigDecimal> findFirstX(){
+		if ( this.hasDimension( DimensionName.X ) ) {
+			return this.readFirstValue( VariableName.X );
+		}
+		if ( this.hasDimension( DimensionName.COL ) ) {
+			return this.readFirstValue( VariableName.LON );
+		}
+		return Optional.empty();
+	}
 	
 	/**
 	 * Read variable value.
@@ -291,5 +324,24 @@ public class NetCDFReader extends AbstractReader {
 				// nothing to do
 			}
 		} );
+	}
+
+	/**
+	 * Read the 1D variable first value.
+	 *
+	 * @param variableName name of variable
+	 * @return first value of variable
+	 * @since 1.1.1
+	 */
+	private Optional<BigDecimal> readFirstValue( String variableName ){
+		return this.findVariable( variableName )
+				.map( variable -> {
+					try {
+						BigDecimal value = NetCDFUtils.readArrayValue( variable.read(), 0 );
+						return value.compareTo( VariableAttribute.MISSING ) == 0 ? null : value;
+					} catch (IOException e) {
+						return null;
+					}
+				} );
 	}
 }

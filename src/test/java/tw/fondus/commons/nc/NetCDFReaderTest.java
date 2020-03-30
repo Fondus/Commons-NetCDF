@@ -5,6 +5,7 @@ import org.junit.Before;
 import org.junit.Test;
 import tw.fondus.commons.nc.util.key.DimensionName;
 
+import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -83,6 +84,18 @@ public class NetCDFReaderTest {
 			Assert.assertTrue( reader.readVariable( "x" ).isPresent() );
 			Assert.assertTrue( reader.readVariable( "y" ).isPresent() );
 			Assert.assertTrue( reader.readVariable( "precipitation_radar" ).isPresent() );
+		}
+	}
+
+	@Test
+	public void testReadFirstValue() throws Exception {
+		try ( NetCDFReader reader = NetCDFReader.read( this.url )){
+			Assert.assertTrue( reader.findFirstX().isPresent() );
+			Assert.assertTrue( reader.findFirstY().isPresent() );
+
+			reader.findFirstX().ifPresent( value -> Assert.assertEquals( new BigDecimal( "118.00625" ), value ) );
+
+			reader.findFirstY().ifPresent( value -> Assert.assertEquals( new BigDecimal( "19.99375" ), value ) );
 		}
 	}
 }
