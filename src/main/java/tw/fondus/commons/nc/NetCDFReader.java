@@ -193,7 +193,7 @@ public class NetCDFReader extends AbstractReader {
 	}
 
 	/**
-	 * Read the Y variable first value.
+	 * Read the Y variable first value, it's usually is most bottom value.
 	 *
 	 * @return first y value, it's optional
 	 * @since 1.1.1
@@ -209,7 +209,7 @@ public class NetCDFReader extends AbstractReader {
 	}
 
 	/**
-	 * Read the X variable first value.
+	 * Read the X variable first value, it's usually is most left value.
 	 *
 	 * @return first x value, it's optional
 	 * @since 1.1.1
