@@ -94,7 +94,6 @@ public class NetCDFReaderTest {
 			Assert.assertTrue( reader.findFirstY().isPresent() );
 
 			reader.findFirstX().ifPresent( value -> Assert.assertEquals( new BigDecimal( "118.00625" ), value ) );
-
 			reader.findFirstY().ifPresent( value -> Assert.assertEquals( new BigDecimal( "19.99375" ), value ) );
 		}
 	}

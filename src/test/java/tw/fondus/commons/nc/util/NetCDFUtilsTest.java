@@ -59,15 +59,41 @@ public class NetCDFUtilsTest {
 
 	@Test
 	public void testArray(){
+		// 1D
 		Assert.assertNotNull( NetCDFUtils.empty1DArrayDouble( 1 ) );
 		Assert.assertNotNull( NetCDFUtils.empty1DArrayFloat( 1 ) );
 		Assert.assertNotNull( NetCDFUtils.empty1DArrayShort( 1 ) );
+		Assert.assertNotNull( NetCDFUtils.empty1DArrayInteger( 1 ) );
 
 		List<BigDecimal> values = new ArrayList<>();
 		IntStream.range( 0, 10 ).forEach( i -> values.add( new BigDecimal( i ) ) );
 		Assert.assertNotNull( NetCDFUtils.create1DArrayFloat( values ) );
+		Assert.assertNotNull( NetCDFUtils.create1DArrayInteger( values ) );
 		Assert.assertNotNull( NetCDFUtils.create1DArrayShort( values ) );
 		Assert.assertNotNull( NetCDFUtils.create1DArrayDouble( values ) );
+
+		// 2D
+		Assert.assertNotNull( NetCDFUtils.empty2DArrayDouble( 12, 11 ) );
+		Assert.assertNotNull( NetCDFUtils.empty2DArrayFloat( 12, 11 ) );
+		Assert.assertNotNull( NetCDFUtils.empty2DArrayShort( 12, 11 ) );
+		Assert.assertNotNull( NetCDFUtils.empty2DArrayInteger( 12, 11 ) );
+
+		List<BigDecimal> yxValues = new ArrayList<>();
+		IntStream.range( 0, 12 ).forEach( j -> {
+			IntStream.range( 0, 11 ).forEach( i -> {
+				yxValues.add( new BigDecimal( Math.random() ) );
+			} );
+		} );
+		Assert.assertNotNull( NetCDFUtils.create2DArrayFloat( yxValues, 12, 11 ) );
+		Assert.assertNotNull( NetCDFUtils.create2DArrayInteger( yxValues, 12, 11 ) );
+		Assert.assertNotNull( NetCDFUtils.create2DArrayShort( yxValues, 12, 11 ) );
+		Assert.assertNotNull( NetCDFUtils.create2DArrayDouble( yxValues, 12, 11 ) );
+
+		// 3D
+		Assert.assertNotNull( NetCDFUtils.empty3DArrayDouble( 1, 12, 11 ) );
+		Assert.assertNotNull( NetCDFUtils.empty3DArrayFloat( 1, 12, 11 ) );
+		Assert.assertNotNull( NetCDFUtils.empty3DArrayShort( 1, 12, 11 ) );
+		Assert.assertNotNull( NetCDFUtils.empty3DArrayInteger( 1, 12, 11 ) );
 
 		List<List<BigDecimal>> tyxValues = new ArrayList<>();
 		IntStream.range( 0, 10 ).forEach( t -> {
@@ -79,6 +105,7 @@ public class NetCDFUtilsTest {
 			} );
 		} );
 		Assert.assertNotNull( NetCDFUtils.create3DArrayFloat( tyxValues, 12, 11 ) );
+		Assert.assertNotNull( NetCDFUtils.create3DArrayInteger( tyxValues, 12, 11 ) );
 		Assert.assertNotNull( NetCDFUtils.create3DArrayShort( tyxValues, 12, 11 ) );
 		Assert.assertNotNull( NetCDFUtils.create3DArrayDouble( tyxValues, 12, 11 ) );
 	}
@@ -133,7 +160,6 @@ public class NetCDFUtilsTest {
 				try {
 					Array values = variable.read();
 					Index index = values.getIndex();
-
 					Assert.assertEquals( NetCDFUtils.readArrayValue( values, 0 ), NetCDFUtils.readArrayValue( values, index.set( 0, 0, 0 ) ) );
 
 					BigDecimal value1 = NetCDFUtils.readArrayValue( values, index.set( 0, 0, 0 ), scale, offset, missing );
@@ -142,7 +168,6 @@ public class NetCDFUtilsTest {
 					BigDecimal value2 = NetCDFUtils.readArrayValue( values, index.set( 0, 0, 0 ), scale, offset );
 					Assert.assertEquals( 0, BigDecimal.ZERO.compareTo( value2 ) );
 					Assert.assertEquals( value1, value2 );
-					
 				} catch (IOException e) {
 					Assert.fail();
 				}
@@ -157,6 +182,7 @@ public class NetCDFUtilsTest {
 				try {
 					List<BigDecimal> values = NetCDFUtils.readOneDimensionArrayValues( variable.read() );
 					Assert.assertFalse( values.isEmpty() );
+					Assert.assertEquals( 441, values.size() );
 					Assert.assertEquals( new BigDecimal( String.valueOf( 118.00625 ) ), values.get( 0 ) );
 				} catch (IOException e) {
 					Assert.fail();
@@ -173,6 +199,7 @@ public class NetCDFUtilsTest {
 					Array values = variable.read();
 					List<BigDecimal> yxGrid = NetCDFUtils.sliceTDimensionArrayYXValues( values, 0 );
 					Assert.assertFalse( yxGrid.isEmpty() );
+					Assert.assertEquals( 561 * 441, yxGrid.size() );
 				} catch (IOException e) {
 					Assert.fail();
 				}
@@ -188,6 +215,26 @@ public class NetCDFUtilsTest {
 					Array values = variable.read();
 					List<List<BigDecimal>> timeGrids = NetCDFUtils.readTYXDimensionArrayValues( values );
 					Assert.assertFalse( timeGrids.isEmpty() );
+					Assert.assertEquals( 144, timeGrids.size() );
+					Assert.assertEquals( 561 * 441, timeGrids.get( 0 ).size() );
+				} catch (IOException e) {
+					Assert.fail();
+				}
+			});
+		}
+	}
+
+	@Test
+	public void testReadYXDimensionArrayValues() throws IOException {
+		Path path = Paths.get( "src/test/resources/2D.nc" );
+		Assert.assertTrue( Files.exists( path ) );
+		try ( NetCDFReader reader = NetCDFReader.read( this.url ) ){
+			reader.findVariable( "block" ).ifPresent( variable -> {
+				try {
+					Array values = variable.read();
+					List<BigDecimal> grid = NetCDFUtils.readYXDimensionArrayValues( values );
+					Assert.assertFalse( grid.isEmpty() );
+					Assert.assertEquals( 2309 * 1833, grid.size() );
 				} catch (IOException e) {
 					Assert.fail();
 				}
