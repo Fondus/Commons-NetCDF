@@ -200,6 +200,7 @@ public class NetCDFUtilsTest {
 					List<BigDecimal> yxGrid = NetCDFUtils.sliceTDimensionArrayYXValues( values, 0 );
 					Assert.assertFalse( yxGrid.isEmpty() );
 					Assert.assertEquals( 561 * 441, yxGrid.size() );
+					Assert.assertEquals( yxGrid.size(), NetCDFUtils.sliceTDimensionArrayYXValues( values, 0, new BigDecimal( "1" ), BigDecimal.ZERO, VariableAttribute.MISSING ).size() );
 				} catch (IOException e) {
 					Assert.fail();
 				}
@@ -217,6 +218,7 @@ public class NetCDFUtilsTest {
 					Assert.assertFalse( timeGrids.isEmpty() );
 					Assert.assertEquals( 144, timeGrids.size() );
 					Assert.assertEquals( 561 * 441, timeGrids.get( 0 ).size() );
+					Assert.assertEquals( timeGrids.get( 0 ).size(), NetCDFUtils.readTYXDimensionArrayValues( values, new BigDecimal( "1" ), BigDecimal.ZERO, VariableAttribute.MISSING ).get( 0 ).size() );
 				} catch (IOException e) {
 					Assert.fail();
 				}
@@ -235,6 +237,7 @@ public class NetCDFUtilsTest {
 					List<BigDecimal> grid = NetCDFUtils.readYXDimensionArrayValues( values );
 					Assert.assertFalse( grid.isEmpty() );
 					Assert.assertEquals( 2309 * 1833, grid.size() );
+					Assert.assertEquals( grid.size(), NetCDFUtils.readYXDimensionArrayValues( values, new BigDecimal( "1" ), BigDecimal.ZERO, VariableAttribute.MISSING ).size() );
 				} catch (IOException e) {
 					Assert.fail();
 				}
