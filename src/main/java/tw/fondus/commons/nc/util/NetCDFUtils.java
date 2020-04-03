@@ -672,7 +672,7 @@ public class NetCDFUtils {
 	}
 
 	/**
-	 * Read the Y, X array values from the Y, X two-dimension array with default scale, offset factor to original value and missing value, <br/>
+	 * Read the Y, X array values from the Y, X two-dimension array with default scale, offset factor to original value, missing value and not inverted Y dimension. <br/>
 	 * if not is two-dimension array, return empty list.
 	 *
 	 * @param values array values
@@ -680,11 +680,24 @@ public class NetCDFUtils {
 	 * @since 1.1.2
 	 */
 	public static List<BigDecimal> readYXDimensionArrayValues( Array values ){
-		return readYXDimensionArrayValues( values, new BigDecimal( "1" ), BigDecimal.ZERO, VariableAttribute.MISSING );
+		return readYXDimensionArrayValues( values, false );
 	}
 
 	/**
-	 * Read the Y, X array values from the Y, X two-dimension array with scale, offset factor to original value and missing value, <br/>
+	 * Read the Y, X array values from the Y, X two-dimension array with default scale, offset factor to original value and missing value. <br/>
+	 * if not is two-dimension array, return empty list.
+	 *
+	 * @param values array values
+	 * @param invertedY inverted Y dimension or not
+	 * @return list of yx one dimension values
+	 * @since 1.1.3
+	 */
+	public static List<BigDecimal> readYXDimensionArrayValues( Array values, boolean invertedY ){
+		return readYXDimensionArrayValues( values, new BigDecimal( "1" ), BigDecimal.ZERO, VariableAttribute.MISSING, invertedY );
+	}
+
+	/**
+	 * Read the Y, X array values from the Y, X two-dimension array with scale, offset factor to original value, missing value and not inverted Y dimension. <br/>
 	 * if not is two-dimension array, return empty list.
 	 *
 	 * @param values array values
@@ -695,6 +708,22 @@ public class NetCDFUtils {
 	 * @since 1.1.2
 	 */
 	public static List<BigDecimal> readYXDimensionArrayValues( Array values, BigDecimal scale, BigDecimal offset, BigDecimal missing ){
+		return readYXDimensionArrayValues( values, scale, offset, missing, false );
+	}
+
+	/**
+	 * Read the Y, X array values from the Y, X two-dimension array with scale, offset factor to original value and missing value. <br/>
+	 * if not is two-dimension array, return empty list.
+	 *
+	 * @param values array values
+	 * @param scale value scale factor
+	 * @param offset value offset factor
+	 * @param missing missing value
+	 * @param invertedY inverted Y dimension or not
+	 * @return list of yx one dimension values
+	 * @since 1.1.3
+	 */
+	public static List<BigDecimal> readYXDimensionArrayValues( Array values, BigDecimal scale, BigDecimal offset, BigDecimal missing, boolean invertedY ){
 		validateArray( values, scale, offset, missing );
 		int[] shape = values.getShape();
 		List<BigDecimal> grid = new ArrayList<>();
@@ -703,7 +732,7 @@ public class NetCDFUtils {
 			int xSize = shape[ 1 ];
 			Index index = values.getIndex();
 
-			IntStream.range( 0, ySize ).forEach( y -> {
+			range( 0, ySize, invertedY ).forEach( y -> {
 				IntStream.range( 0, xSize ).forEach( x -> grid.add( NetCDFUtils.readArrayValue( values, index.set( y, x ), scale, offset, missing ) ) );
 			} );
 		}
@@ -711,7 +740,7 @@ public class NetCDFUtils {
 	}
 
 	/**
-	 * Read the Time, Y, X three-dimension array values to list with default scale, offset factor to original value and missing value, <br/>
+	 * Read the Time, Y, X three-dimension array values to list with default scale, offset factor to original value, missing value and not inverted Y dimension. <br/>
 	 * if not is three-dimension array, return empty list.
 	 *
 	 * @param values array values
@@ -719,11 +748,24 @@ public class NetCDFUtils {
 	 * @since 1.0.0
 	 */
 	public static List<List<BigDecimal>> readTYXDimensionArrayValues( Array values ){
-		return readTYXDimensionArrayValues( values, new BigDecimal( "1" ), BigDecimal.ZERO, VariableAttribute.MISSING );
+		return readTYXDimensionArrayValues( values, false );
 	}
 
 	/**
-	 * Read the Time, Y, X three-dimension array values to list with scale, offset factor to original value and missing value, <br/>
+	 * Read the Time, Y, X three-dimension array values to list with default scale, offset factor to original value, missing value. <br/>
+	 * if not is three-dimension array, return empty list.
+	 *
+	 * @param values array values
+	 * @param invertedY inverted Y dimension or not
+	 * @return list with index order time-YX values
+	 * @since 1.1.3
+	 */
+	public static List<List<BigDecimal>> readTYXDimensionArrayValues( Array values, boolean invertedY ){
+		return readTYXDimensionArrayValues( values, new BigDecimal( "1" ), BigDecimal.ZERO, VariableAttribute.MISSING, invertedY );
+	}
+
+	/**
+	 * Read the Time, Y, X three-dimension array values to list with scale, offset factor to original value, missing value and not inverted Y dimension. <br/>
 	 * if not is three-dimension array, return empty list.
 	 *
 	 * @param values array values
@@ -734,18 +776,34 @@ public class NetCDFUtils {
 	 * @since 1.0.0
 	 */
 	public static List<List<BigDecimal>> readTYXDimensionArrayValues( Array values, BigDecimal scale, BigDecimal offset, BigDecimal missing ){
+		return readTYXDimensionArrayValues( values, scale, offset, missing, false );
+	}
+
+	/**
+	 * Read the Time, Y, X three-dimension array values to list with scale, offset factor to original value and missing value. <br/>
+	 * if not is three-dimension array, return empty list.
+	 *
+	 * @param values array values
+	 * @param scale value scale factor
+	 * @param offset value offset factor
+	 * @param missing missing value
+	 * @param invertedY inverted Y dimension or not
+	 * @return list with index order time-yx one dimension values
+	 * @since 1.1.3
+	 */
+	public static List<List<BigDecimal>> readTYXDimensionArrayValues( Array values, BigDecimal scale, BigDecimal offset, BigDecimal missing, boolean invertedY ){
 		validateArray( values, scale, offset, missing );
 		List<List<BigDecimal>> timeGrids = new ArrayList<>();
 		int[] shape = values.getShape();
 		if ( shape.length == 3 ){
 			int timeSize = shape[ 0 ];
-			IntStream.range( 0, timeSize ).forEach( time -> timeGrids.add( sliceTDimensionArrayYXValues( values, time, scale, offset, missing ) ) );
+			IntStream.range( 0, timeSize ).forEach( time -> timeGrids.add( sliceTDimensionArrayYXValues( values, time, scale, offset, missing, invertedY ) ) );
 		}
 		return timeGrids;
 	}
 
 	/**
-	 * Slice the Y, X array values at t index from the Time, Y, X three-dimension array with <p>default</> scale, offset factor to original value and missing value, <br/>
+	 * Slice the Y, X array values at t index from the Time, Y, X three-dimension array with <p>default</> scale, offset factor to original value, missing value and not inverted Y dimension. <br/>
 	 * if not is three-dimension array, return empty list.
 	 *
 	 * @param values array values
@@ -754,11 +812,25 @@ public class NetCDFUtils {
 	 * @since 1.1.0
 	 */
 	public static List<BigDecimal> sliceTDimensionArrayYXValues( Array values, int tIndex ){
-		return sliceTDimensionArrayYXValues( values, tIndex, new BigDecimal( "1" ), BigDecimal.ZERO, VariableAttribute.MISSING );
+		return sliceTDimensionArrayYXValues( values, tIndex, false );
 	}
 
 	/**
-	 * Slice the Y, X array values at t index from the Time, Y, X three-dimension array with scale, offset factor to original value and missing value, <br/>
+	 * Slice the Y, X array values at t index from the Time, Y, X three-dimension array with scale, offset factor to original value and missing value. <br/>
+	 * if not is three-dimension array, return empty list.
+	 *
+	 * @param values array values
+	 * @param tIndex t dimension index
+	 * @param invertedY inverted Y dimension or not
+	 * @return list of yx one dimension values
+	 * @since 1.1.3
+	 */
+	public static List<BigDecimal> sliceTDimensionArrayYXValues( Array values, int tIndex, boolean invertedY ){
+		return sliceTDimensionArrayYXValues( values, tIndex, new BigDecimal( "1" ), BigDecimal.ZERO, VariableAttribute.MISSING, invertedY );
+	}
+
+	/**
+	 * Slice the Y, X array values at t index from the Time, Y, X three-dimension array with scale, offset factor to original value, missing value and not inverted Y dimension. <br/>
 	 * if not is three-dimension array, return empty list.
 	 *
 	 * @param values array values
@@ -770,16 +842,33 @@ public class NetCDFUtils {
 	 * @since 1.1.0
 	 */
 	public static List<BigDecimal> sliceTDimensionArrayYXValues( Array values, int tIndex, BigDecimal scale, BigDecimal offset, BigDecimal missing ){
+		return sliceTDimensionArrayYXValues( values, tIndex, scale, offset, missing, false );
+	}
+
+	/**
+	 * Slice the Y, X array values at t index from the Time, Y, X three-dimension array with scale, offset factor to original value and missing value. <br/>
+	 * if not is three-dimension array, return empty list.
+	 *
+	 * @param values array values
+	 * @param tIndex t dimension index
+	 * @param scale value scale factor
+	 * @param offset value offset factor
+	 * @param missing missing value
+	 * @param invertedY inverted Y dimension or not
+	 * @return list of yx one dimension values
+	 * @since 1.1.3
+	 */
+	public static List<BigDecimal> sliceTDimensionArrayYXValues( Array values, int tIndex, BigDecimal scale, BigDecimal offset, BigDecimal missing, boolean invertedY ){
 		validateArray( values, scale, offset, missing );
 		int[] shape = values.getShape();
 		List<BigDecimal> grid = new ArrayList<>();
-		if ( shape.length == 3 ){
+		if ( shape.length == 3 ) {
 			Preconditions.checkElementIndex( tIndex, shape[ 0 ], "NetCDFUtils: the tIndex should not greater than t dimension size." );
 			int ySize = shape[ 1 ];
 			int xSize = shape[ 2 ];
 			Index index = values.getIndex();
 
-			IntStream.range( 0, ySize ).forEach( y -> {
+			range( 0, ySize, invertedY ).forEach( y -> {
 				IntStream.range( 0, xSize ).forEach( x -> grid.add( NetCDFUtils.readArrayValue( values, index.set( tIndex, y, x ), scale, offset, missing ) ) );
 			} );
 		}
@@ -826,7 +915,7 @@ public class NetCDFUtils {
 	public static BigDecimal originalValue( BigDecimal value, BigDecimal scale, BigDecimal offset, BigDecimal missing ) {
 		Preconditions.checkNotNull( value, buildNotNullMessage( "value" ) );
 		validateFactor( scale, offset, missing );
-		return value.compareTo( missing ) == 0 ? missing : value.multiply( scale ).add( offset );
+		return value.compareTo( missing ) == 0 ? VariableAttribute.MISSING : value.multiply( scale ).add( offset );
 	}
 
 	/**
@@ -855,7 +944,7 @@ public class NetCDFUtils {
 	public static BigDecimal packageValue( BigDecimal value, BigDecimal scale, BigDecimal offset, BigDecimal missing ) {
 		Preconditions.checkNotNull( value, buildNotNullMessage( "value" ) );
 		validateFactor( scale, offset, missing );
-		return value.compareTo( missing ) == 0 ? missing : value.subtract( offset ).divide( scale, 0, RoundingMode.HALF_UP );
+		return value.compareTo( missing ) == 0 ? VariableAttribute.MISSING : value.subtract( offset ).divide( scale, 0, RoundingMode.HALF_UP );
 	}
 
 	/**
@@ -884,6 +973,19 @@ public class NetCDFUtils {
 		Preconditions.checkNotNull( scale, buildNotNullMessage( "scale" ) );
 		Preconditions.checkNotNull( offset, buildNotNullMessage( "offset" ) );
 		Preconditions.checkNotNull( missing, buildNotNullMessage( "missing" ) );
+	}
+
+	/**
+	 * Get int stream with range.
+	 *
+	 * @param from from index
+	 * @param to to index
+	 * @param inverted is inverted or not
+	 * @return IntStream
+	 * @since 1.1.3
+	 */
+	private static IntStream range( int from, int to, boolean inverted ){
+		return inverted ? IntStream.range( from, to ).map( i -> to - i + from - 1 ) : IntStream.range( from, to );
 	}
 	
 	/**
