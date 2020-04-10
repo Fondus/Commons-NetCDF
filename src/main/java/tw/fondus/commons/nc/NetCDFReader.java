@@ -121,7 +121,7 @@ public class NetCDFReader extends AbstractReader {
 	 * @since 1.0.0
 	 */
 	public int getDimensionLength( String id ){
-		return this.findDimension( id ).map( dimension -> dimension.getLength() ).orElse( 0 );
+		return this.findDimension( id ).map( Dimension::getLength ).orElse( 0 );
 	}
 	
 	@Override
@@ -184,12 +184,29 @@ public class NetCDFReader extends AbstractReader {
 					Array array = variable.read();
 					IntStream.range( 0, (int) array.getSize() )
 						.mapToObj( i -> array.getLong( i ) * constFactor )
-						.forEach( time -> times.add( time ) );
+						.forEach( times::add );
 				} catch (IOException e) {
 					// nothing to do
 				}
 			} );
 		return times;
+	}
+
+	/**
+	 * Find the station id values from the NetCDF file.
+	 *
+	 * @return list of station id, it's optional
+	 * @since 1.1.5
+	 */
+	public Optional<List<String>> findStationIds(){
+		return this.findVariable( VariableName.ID_STATION ).map( variable -> {
+			try {
+				return NetCDFUtils.readStringValues( variable );
+			} catch (IOException e) {
+				// nothing to do
+			}
+			return null;
+		} );
 	}
 
 	/**

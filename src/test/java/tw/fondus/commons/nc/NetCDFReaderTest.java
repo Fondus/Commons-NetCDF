@@ -9,6 +9,8 @@ import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * The unit test of NerCDF reader.
@@ -95,6 +97,24 @@ public class NetCDFReaderTest {
 
 			reader.findFirstX().ifPresent( value -> Assert.assertEquals( new BigDecimal( "118.00625" ), value ) );
 			reader.findFirstY().ifPresent( value -> Assert.assertEquals( new BigDecimal( "19.99375" ), value ) );
+		}
+	}
+
+	@Test
+	public void testFindStationId() throws Exception {
+		String url = "src/test/resources/Tide_6M_CWB.nc";
+
+		Path path = Paths.get( url );
+		Assert.assertTrue( Files.exists( path ) );
+
+		try ( NetCDFReader reader = NetCDFReader.read( url ) ){
+			Optional<List<String>> optional = reader.findStationIds();
+			Assert.assertTrue( optional.isPresent() );
+
+			optional.ifPresent( ids -> {
+				Assert.assertEquals( "1102", ids.get( 0 ) );
+				Assert.assertEquals( "1116", ids.get( 1 ) );
+			} );
 		}
 	}
 }
