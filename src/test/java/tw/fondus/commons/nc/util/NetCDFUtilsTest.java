@@ -230,7 +230,7 @@ public class NetCDFUtilsTest {
 	public void testReadYXDimensionArrayValues() throws IOException {
 		Path path = Paths.get( "src/test/resources/2D.nc" );
 		Assert.assertTrue( Files.exists( path ) );
-		try ( NetCDFReader reader = NetCDFReader.read( this.url ) ){
+		try ( NetCDFReader reader = NetCDFReader.read( path ) ){
 			reader.findVariable( "block" ).ifPresent( variable -> {
 				try {
 					Array values = variable.read();
@@ -238,6 +238,24 @@ public class NetCDFUtilsTest {
 					Assert.assertFalse( grid.isEmpty() );
 					Assert.assertEquals( 2309 * 1833, grid.size() );
 					Assert.assertEquals( grid.size(), NetCDFUtils.readYXDimensionArrayValues( values, new BigDecimal( "1" ), BigDecimal.ZERO, VariableAttribute.MISSING ).size() );
+				} catch (IOException e) {
+					Assert.fail();
+				}
+			});
+		}
+	}
+
+	@Test
+	public void testReadTimeStationArrayValues() throws IOException {
+		Path path = Paths.get( "src/test/resources/Tide_6M_CWB.nc" );
+		Assert.assertTrue( Files.exists( path ) );
+		try ( NetCDFReader reader = NetCDFReader.read( path ) ){
+			reader.findVariable( "level_tide_observed" ).ifPresent( variable -> {
+				try {
+					Array values = variable.read();
+					List<BigDecimal> series = NetCDFUtils.readTimeStationArrayValues( values, 0 );
+					Assert.assertFalse( series.isEmpty() );
+					Assert.assertEquals( 240, series.size() );
 				} catch (IOException e) {
 					Assert.fail();
 				}
