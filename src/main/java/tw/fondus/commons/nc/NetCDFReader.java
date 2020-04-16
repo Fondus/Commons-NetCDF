@@ -193,6 +193,38 @@ public class NetCDFReader extends AbstractReader {
 	}
 
 	/**
+	 * Find the y coordinates from the NetCDF file.
+	 *
+	 * @return y coordinates, it's optional
+	 * @since 1.1.6
+	 */
+	public Optional<List<BigDecimal>> findYCoordinates(){
+		if ( this.hasDimension( DimensionName.Y ) ) {
+			return this.findOneDimensionArrayValues( VariableName.Y );
+		}
+		if ( this.hasDimension( DimensionName.ROW ) || this.hasDimension( DimensionName.LAT )  ) {
+			return this.findOneDimensionArrayValues( VariableName.LAT );
+		}
+		return Optional.empty();
+	}
+
+	/**
+	 * Find the x coordinates from the NetCDF file.
+	 *
+	 * @return x coordinates, it's optional
+	 * @since 1.1.6
+	 */
+	public Optional<List<BigDecimal>> findXCoordinates(){
+		if ( this.hasDimension( DimensionName.X ) ) {
+			return this.findOneDimensionArrayValues( VariableName.X );
+		}
+		if ( this.hasDimension( DimensionName.COL ) || this.hasDimension( DimensionName.LON ) ) {
+			return this.findOneDimensionArrayValues( VariableName.LON );
+		}
+		return Optional.empty();
+	}
+
+	/**
 	 * Find the station id values from the NetCDF file.
 	 *
 	 * @return list of station id, it's optional
@@ -219,7 +251,7 @@ public class NetCDFReader extends AbstractReader {
 		if ( this.hasDimension( DimensionName.Y ) ) {
 			return this.readFirstValue( VariableName.Y );
 		}
-		if ( this.hasDimension( DimensionName.ROW ) ) {
+		if ( this.hasDimension( DimensionName.ROW ) || this.hasDimension( DimensionName.LAT )  ) {
 			return this.readFirstValue( VariableName.LAT );
 		}
 		return Optional.empty();
@@ -235,8 +267,40 @@ public class NetCDFReader extends AbstractReader {
 		if ( this.hasDimension( DimensionName.X ) ) {
 			return this.readFirstValue( VariableName.X );
 		}
-		if ( this.hasDimension( DimensionName.COL ) ) {
+		if ( this.hasDimension( DimensionName.COL ) || this.hasDimension( DimensionName.LON ) ) {
 			return this.readFirstValue( VariableName.LON );
+		}
+		return Optional.empty();
+	}
+
+	/**
+	 * Read the Y variable last value, it's usually is most top value.
+	 *
+	 * @return last y value, it's optional
+	 * @since 1.1.6
+	 */
+	public Optional<BigDecimal> findLastY(){
+		if ( this.hasDimension( DimensionName.Y ) ) {
+			return this.readLastValue( VariableName.Y );
+		}
+		if ( this.hasDimension( DimensionName.ROW ) || this.hasDimension( DimensionName.LAT ) ) {
+			return this.readLastValue( VariableName.LAT );
+		}
+		return Optional.empty();
+	}
+
+	/**
+	 * Read the X variable last value, it's usually is most right value.
+	 *
+	 * @return last x value, it's optional
+	 * @since 1.1.6
+	 */
+	public Optional<BigDecimal> findLastX(){
+		if ( this.hasDimension( DimensionName.X ) ) {
+			return this.readLastValue( VariableName.X );
+		}
+		if ( this.hasDimension( DimensionName.COL ) || this.hasDimension( DimensionName.LON ) ) {
+			return this.readLastValue( VariableName.LON );
 		}
 		return Optional.empty();
 	}
@@ -359,6 +423,46 @@ public class NetCDFReader extends AbstractReader {
 					} catch (IOException e) {
 						return null;
 					}
+				} );
+	}
+
+	/**
+	 * Read the 1D variable last value.
+	 *
+	 * @param variableName name of variable
+	 * @return last value of variable
+	 * @since 1.1.6
+	 */
+	private Optional<BigDecimal> readLastValue( String variableName ){
+		return this.findVariable( variableName )
+				.map( variable -> {
+					try {
+						BigDecimal value = NetCDFUtils.readArrayValue( variable.read(), variable.getShape(0 ) - 1 );
+						return value.compareTo( VariableAttribute.MISSING ) == 0 ? null : value;
+					} catch (IOException e) {
+						return null;
+					}
+				} );
+	}
+
+	/**
+	 * Find the one-dimension values from the NetCDF file.
+	 *
+	 * @param variableName variable name
+	 * @return 1d values, it's optional
+	 * @since 1.1.6
+	 */
+	private Optional<List<BigDecimal>> findOneDimensionArrayValues( String variableName ){
+		List<BigDecimal> values = new ArrayList<>();
+		return this.findVariable( variableName )
+				.map( variable -> {
+					try {
+						Array array = variable.read();
+						return NetCDFUtils.readOneDimensionArrayValues( array );
+					} catch (IOException e) {
+						// nothing to do
+					}
+					return null;
 				} );
 	}
 }

@@ -101,6 +101,38 @@ public class NetCDFReaderTest {
 	}
 
 	@Test
+	public void testReadLastValue() throws Exception {
+		try ( NetCDFReader reader = NetCDFReader.read( this.url )){
+			Assert.assertTrue( reader.findLastX().isPresent() );
+			Assert.assertTrue( reader.findLastY().isPresent() );
+
+			reader.findLastX().ifPresent( value -> Assert.assertEquals( new BigDecimal( "123.50625" ), value ) );
+			reader.findLastY().ifPresent( value -> Assert.assertEquals( new BigDecimal( "26.99375" ), value ) );
+		}
+	}
+
+	@Test
+	public void testFindCoordinates() throws Exception {
+		try ( NetCDFReader reader = NetCDFReader.read( this.url )){
+			Optional<List<BigDecimal>> optionalY = reader.findYCoordinates();
+			Optional<List<BigDecimal>> optionalX = reader.findXCoordinates();
+
+			Assert.assertTrue( optionalY.isPresent() );
+			Assert.assertTrue( optionalX.isPresent() );
+
+			optionalY.ifPresent( y -> {
+				reader.findFirstY().ifPresent( firstY -> Assert.assertEquals( firstY, y.get( 0 ) ) );
+				reader.findLastY().ifPresent( lastY -> Assert.assertEquals( lastY, y.get( y.size() - 1 ) ) );
+			} );
+
+			optionalX.ifPresent( x -> {
+				reader.findFirstX().ifPresent( firstX -> Assert.assertEquals( firstX, x.get( 0 ) ) );
+				reader.findLastX().ifPresent( lastX -> Assert.assertEquals( lastX, x.get( x.size() - 1 ) ) );
+			} );
+		}
+	}
+
+	@Test
 	public void testFindStationId() throws Exception {
 		String url = "src/test/resources/Tide_6M_CWB.nc";
 
