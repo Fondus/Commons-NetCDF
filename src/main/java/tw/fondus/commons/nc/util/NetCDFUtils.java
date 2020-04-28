@@ -726,22 +726,21 @@ public class NetCDFUtils {
 	public static List<BigDecimal> readYXDimensionArrayValues( Array values, BigDecimal scale, BigDecimal offset, BigDecimal missing, boolean invertedY ){
 		validateArray( values, scale, offset, missing );
 		int[] shape = values.getShape();
-		List<BigDecimal> grid = new ArrayList<>();
-		if ( shape.length == 2 ){
-			int ySize = shape[ 0 ];
-			int xSize = shape[ 1 ];
-			Index index = values.getIndex();
+		Preconditions.checkArgument( shape.length == 2, "NetCDFUtils: The values array shape size should be 2." );
 
-			range( 0, ySize, invertedY ).forEach( y -> {
-				IntStream.range( 0, xSize ).forEach( x -> grid.add( NetCDFUtils.readArrayValue( values, index.set( y, x ), scale, offset, missing ) ) );
-			} );
-		}
+		List<BigDecimal> grid = new ArrayList<>();
+		int ySize = shape[ 0 ];
+		int xSize = shape[ 1 ];
+		Index index = values.getIndex();
+
+		range( 0, ySize, invertedY ).forEach( y -> {
+			IntStream.range( 0, xSize ).forEach( x -> grid.add( NetCDFUtils.readArrayValue( values, index.set( y, x ), scale, offset, missing ) ) );
+		} );
 		return grid;
 	}
 
 	/**
-	 * Read the Time, Y, X three-dimension array values to list with default scale, offset factor to original value, missing value and not inverted Y dimension. <br/>
-	 * if not is three-dimension array, return empty list.
+	 * Read the Time, Y, X three-dimension array values to list with default scale, offset factor to original value, missing value and not inverted Y dimension.
 	 *
 	 * @param values array values
 	 * @return list with index order time-YX values
@@ -752,8 +751,7 @@ public class NetCDFUtils {
 	}
 
 	/**
-	 * Read the Time, Y, X three-dimension array values to list with default scale, offset factor to original value, missing value. <br/>
-	 * if not is three-dimension array, return empty list.
+	 * Read the Time, Y, X three-dimension array values to list with default scale, offset factor to original value, missing value.
 	 *
 	 * @param values array values
 	 * @param invertedY inverted Y dimension or not
@@ -765,8 +763,7 @@ public class NetCDFUtils {
 	}
 
 	/**
-	 * Read the Time, Y, X three-dimension array values to list with scale, offset factor to original value, missing value and not inverted Y dimension. <br/>
-	 * if not is three-dimension array, return empty list.
+	 * Read the Time, Y, X three-dimension array values to list with scale, offset factor to original value, missing value and not inverted Y dimension.
 	 *
 	 * @param values array values
 	 * @param scale value scale factor
@@ -780,8 +777,7 @@ public class NetCDFUtils {
 	}
 
 	/**
-	 * Read the Time, Y, X three-dimension array values to list with scale, offset factor to original value and missing value. <br/>
-	 * if not is three-dimension array, return empty list.
+	 * Read the Time, Y, X three-dimension array values to list with scale, offset factor to original value and missing value.
 	 *
 	 * @param values array values
 	 * @param scale value scale factor
@@ -793,13 +789,13 @@ public class NetCDFUtils {
 	 */
 	public static List<List<BigDecimal>> readTYXDimensionArrayValues( Array values, BigDecimal scale, BigDecimal offset, BigDecimal missing, boolean invertedY ){
 		validateArray( values, scale, offset, missing );
-		List<List<BigDecimal>> timeGrids = new ArrayList<>();
 		int[] shape = values.getShape();
-		if ( shape.length == 3 ){
-			int timeSize = shape[ 0 ];
-			IntStream.range( 0, timeSize ).forEach( time -> timeGrids.add( sliceTDimensionArrayYXValues( values, time, scale, offset, missing, invertedY ) ) );
-		}
-		return timeGrids;
+		Preconditions.checkArgument( shape.length == 3, "NetCDFUtils: The values array shape size should be 3." );
+
+		int timeSize = shape[ 0 ];
+		return IntStream.range( 0, timeSize )
+				.mapToObj( time -> sliceTDimensionArrayYXValues( values, time, scale, offset, missing, invertedY ) )
+				.collect( Collectors.toList() );
 	}
 
 	/**
@@ -861,18 +857,55 @@ public class NetCDFUtils {
 	public static List<BigDecimal> sliceTDimensionArrayYXValues( Array values, int tIndex, BigDecimal scale, BigDecimal offset, BigDecimal missing, boolean invertedY ){
 		validateArray( values, scale, offset, missing );
 		int[] shape = values.getShape();
-		List<BigDecimal> grid = new ArrayList<>();
-		if ( shape.length == 3 ) {
-			Preconditions.checkElementIndex( tIndex, shape[ 0 ], "NetCDFUtils: the tIndex should not greater than t dimension size." );
-			int ySize = shape[ 1 ];
-			int xSize = shape[ 2 ];
-			Index index = values.getIndex();
+		Preconditions.checkArgument( shape.length == 3, "NetCDFUtils: The values array shape size should be 3." );
+		Preconditions.checkElementIndex( tIndex, shape[0], "NetCDFUtils: the tIndex should not greater than t dimension size." );
 
-			range( 0, ySize, invertedY ).forEach( y -> {
-				IntStream.range( 0, xSize ).forEach( x -> grid.add( NetCDFUtils.readArrayValue( values, index.set( tIndex, y, x ), scale, offset, missing ) ) );
-			} );
-		}
+		List<BigDecimal> grid = new ArrayList<>();
+		int ySize = shape[ 1 ];
+		int xSize = shape[ 2 ];
+		Index index = values.getIndex();
+
+		range( 0, ySize, invertedY ).forEach( y -> {
+			IntStream.range( 0, xSize ).forEach( x -> grid.add( NetCDFUtils.readArrayValue( values, index.set( tIndex, y, x ), scale, offset, missing ) ) );
+		} );
 		return grid;
+	}
+
+	/**
+	 * Read the Time, Station two-dimension array values to list with default scale, offset factor to original value and missing value.
+	 *
+	 * @param values array values
+	 * @param stationIndex station index
+	 * @return station time series values
+	 * @since 1.1.5
+	 */
+	public static List<BigDecimal> readTimeStationArrayValues( Array values, int stationIndex ){
+		return readTimeStationArrayValues( values, stationIndex, new BigDecimal( "1" ), BigDecimal.ZERO, VariableAttribute.MISSING );
+	}
+
+	/**
+	 * Read the Time, Station two-dimension array values to list with scale, offset factor to original value and missing value.
+	 *
+	 * @param values array values
+	 * @param stationIndex station index
+	 * @param scale value scale factor
+	 * @param offset value offset factor
+	 * @param missing missing value
+	 * @return station time series values
+	 * @since 1.1.5
+	 */
+	public static List<BigDecimal> readTimeStationArrayValues( Array values, int stationIndex, BigDecimal scale, BigDecimal offset, BigDecimal missing ){
+		validateArray( values, scale, offset, missing );
+		int[] shape = values.getShape();
+		Preconditions.checkArgument( shape.length == 2, "NetCDFUtils: The values array shape size should be 2." );
+		Preconditions.checkElementIndex( stationIndex, shape[1], "NetCDFUtils: the stationIndex should not greater than station dimension size." );
+
+		int tSize = shape[ 0 ];
+		Index index = values.getIndex();
+
+		return IntStream.range( 0, tSize )
+				.mapToObj( time -> NetCDFUtils.readArrayValue( values, index.set( time, stationIndex ), scale, offset, missing ) )
+				.collect( Collectors.toList() );
 	}
 
 	/**
