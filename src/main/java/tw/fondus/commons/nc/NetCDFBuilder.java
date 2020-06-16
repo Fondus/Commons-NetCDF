@@ -128,7 +128,7 @@ public class NetCDFBuilder {
 	 *
 	 */
 	public static class NetCDFDefiner {
-		private Map<String, Dimension> dimensionsMap;
+		private final Map<String, Dimension> dimensionsMap;
 		private String path;
 		private boolean isLargeFile;
 		private NetcdfFileWriter writer;
@@ -163,7 +163,7 @@ public class NetCDFBuilder {
 		 * Create an new NetCDF file with default NetCDF 3 version.
 		 *
 		 * @return definer
-		 * @throws IOException
+		 * @throws IOException has IO Exception
 		 */
 		private NetCDFDefiner create() throws IOException {
 			this.writer = NetcdfFileWriter.createNew( NetcdfFileWriter.Version.netcdf3, this.path );
