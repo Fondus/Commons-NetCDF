@@ -364,7 +364,8 @@ public class NetCDFReader extends AbstractReader {
 	 */
 	public boolean is2D() {
 		return ( this.hasDimension( DimensionName.X ) && this.hasDimension( DimensionName.Y ) ) ||
-				( this.hasDimension( DimensionName.COL ) && this.hasDimension( DimensionName.ROW ) );
+				( this.hasDimension( DimensionName.COL ) && this.hasDimension( DimensionName.ROW ) ) ||
+				( this.hasDimension( DimensionName.LON ) && this.hasDimension( DimensionName.LAT ) );
 	}
 	
 	/**
