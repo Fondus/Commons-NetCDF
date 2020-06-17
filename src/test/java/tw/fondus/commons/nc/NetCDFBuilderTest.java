@@ -57,11 +57,11 @@ public class NetCDFBuilderTest {
 		List<List<BigDecimal>> values = new ArrayList<>();
 		IntStream.range( 0, tSize ).forEach( t -> {
 			values.add( new ArrayList<>() );
-			IntStream.range( 0, ySize ).forEach( j -> {
-				IntStream.range( 0, xSize ).forEach( i -> {
-					values.get( t ).add( new BigDecimal( Math.random() ) );
-				} );
-			} );
+			IntStream.range( 0, ySize ).forEach( j ->
+				IntStream.range( 0, xSize ).forEach( i ->
+					values.get( t ).add( BigDecimal.valueOf( Math.random() ) )
+				)
+			);
 		} );
 		ArrayFloat.D3 rainfall = NetCDFUtils.create3DArrayFloat( values, ySize, xSize );
 

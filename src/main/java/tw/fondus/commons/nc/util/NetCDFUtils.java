@@ -172,9 +172,9 @@ public class NetCDFUtils {
 	public static ArrayShort.D2 create2DArrayShort( List<BigDecimal> yxValues, int ySize, int xSize ){
 		Preconditions.checkNotNull( yxValues, buildNotNullMessage( "yxValues" ) );
 		ArrayShort.D2 array = empty2DArrayShort( ySize, xSize );
-		IntStream.range( 0, ySize ).forEach( y -> {
-			IntStream.range( 0, xSize ).forEach( x -> array.set( y, x, yxValues.get( create1DIndex( y, x, xSize ) ).shortValue() ) );
-		} );
+		IntStream.range( 0, ySize ).forEach( y ->
+			IntStream.range( 0, xSize ).forEach( x -> array.set( y, x, yxValues.get( create1DIndex( y, x, xSize ) ).shortValue() ) )
+		);
 		return array;
 	}
 
@@ -190,9 +190,9 @@ public class NetCDFUtils {
 	public static ArrayInt.D2 create2DArrayInteger( List<BigDecimal> yxValues, int ySize, int xSize ){
 		Preconditions.checkNotNull( yxValues, buildNotNullMessage( "yxValues" ) );
 		ArrayInt.D2 array = empty2DArrayInteger( ySize, xSize );
-		IntStream.range( 0, ySize ).forEach( y -> {
-			IntStream.range( 0, xSize ).forEach( x -> array.set( y, x, yxValues.get( create1DIndex( y, x, xSize ) ).intValue()) );
-		} );
+		IntStream.range( 0, ySize ).forEach( y ->
+			IntStream.range( 0, xSize ).forEach( x -> array.set( y, x, yxValues.get( create1DIndex( y, x, xSize ) ).intValue()) )
+		);
 		return array;
 	}
 
@@ -208,9 +208,9 @@ public class NetCDFUtils {
 	public static ArrayFloat.D2 create2DArrayFloat( List<BigDecimal> yxValues, int ySize, int xSize ){
 		Preconditions.checkNotNull( yxValues, buildNotNullMessage( "yxValues" ) );
 		ArrayFloat.D2 array = empty2DArrayFloat( ySize, xSize );
-		IntStream.range( 0, ySize ).forEach( y -> {
-			IntStream.range( 0, xSize ).forEach( x -> array.set( y, x, yxValues.get( create1DIndex( y, x, xSize ) ).floatValue() ) );
-		} );
+		IntStream.range( 0, ySize ).forEach( y ->
+			IntStream.range( 0, xSize ).forEach( x -> array.set( y, x, yxValues.get( create1DIndex( y, x, xSize ) ).floatValue() ) )
+		);
 		return array;
 	}
 
@@ -226,9 +226,9 @@ public class NetCDFUtils {
 	public static ArrayDouble.D2 create2DArrayDouble( List<BigDecimal> yxValues, int ySize, int xSize ){
 		Preconditions.checkNotNull( yxValues, buildNotNullMessage( "yxValues" ) );
 		ArrayDouble.D2 array = empty2DArrayDouble( ySize, xSize );
-		IntStream.range( 0, ySize ).forEach( y -> {
-			IntStream.range( 0, xSize ).forEach( x -> array.set( y, x, yxValues.get( create1DIndex( y, x, xSize ) ).doubleValue() ) );
-		} );
+		IntStream.range( 0, ySize ).forEach( y ->
+			IntStream.range( 0, xSize ).forEach( x -> array.set( y, x, yxValues.get( create1DIndex( y, x, xSize ) ).doubleValue() ) )
+		);
 		return array;
 	}
 
@@ -244,11 +244,11 @@ public class NetCDFUtils {
 	public static ArrayShort.D3 create3DArrayShort( List<List<BigDecimal>> tyxValues, int ySize, int xSize ){
 		Preconditions.checkNotNull( tyxValues, buildNotNullMessage( "tyxValues" ) );
 		ArrayShort.D3 array = empty3DArrayShort( tyxValues.size(), ySize, xSize );
-		IntStream.range( 0, tyxValues.size() ).forEach( t -> {
-			IntStream.range( 0, ySize ).forEach( y -> {
-				IntStream.range( 0, xSize ).forEach( x -> array.set( t, y, x, tyxValues.get( t ).get( create1DIndex( y, x, xSize ) ).shortValue() ) );
-			} );
-		} );
+		IntStream.range( 0, tyxValues.size() ).forEach( t ->
+			IntStream.range( 0, ySize ).forEach( y ->
+				IntStream.range( 0, xSize ).forEach( x -> array.set( t, y, x, tyxValues.get( t ).get( create1DIndex( y, x, xSize ) ).shortValue() ) )
+			)
+		);
 		return array;
 	}
 
@@ -264,11 +264,11 @@ public class NetCDFUtils {
 	public static ArrayInt.D3 create3DArrayInteger( List<List<BigDecimal>> tyxValues, int ySize, int xSize ){
 		Preconditions.checkNotNull( tyxValues, buildNotNullMessage( "tyxValues" ) );
 		ArrayInt.D3 array = empty3DArrayInteger( tyxValues.size(), ySize, xSize );
-		IntStream.range( 0, tyxValues.size() ).forEach( t -> {
-			IntStream.range( 0, ySize ).forEach( y -> {
-				IntStream.range( 0, xSize ).forEach( x -> array.set( t, y, x, tyxValues.get( t ).get( create1DIndex( y, x, xSize ) ).intValue() ) );
-			} );
-		} );
+		IntStream.range( 0, tyxValues.size() ).forEach( t ->
+			IntStream.range( 0, ySize ).forEach( y ->
+				IntStream.range( 0, xSize ).forEach( x -> array.set( t, y, x, tyxValues.get( t ).get( create1DIndex( y, x, xSize ) ).intValue() ) )
+			)
+		);
 		return array;
 	}
 
@@ -284,11 +284,11 @@ public class NetCDFUtils {
 	public static ArrayFloat.D3 create3DArrayFloat( List<List<BigDecimal>> tyxValues, int ySize, int xSize ){
 		Preconditions.checkNotNull( tyxValues, buildNotNullMessage( "tyxValues" ) );
 		ArrayFloat.D3 array = empty3DArrayFloat( tyxValues.size(), ySize, xSize );
-		IntStream.range( 0, tyxValues.size() ).forEach( t -> {
-			IntStream.range( 0, ySize ).forEach( y -> {
-				IntStream.range( 0, xSize ).forEach( x -> array.set( t, y, x, tyxValues.get( t ).get( create1DIndex( y, x, xSize ) ).floatValue() ) );
-			} );
-		} );
+		IntStream.range( 0, tyxValues.size() ).forEach( t ->
+			IntStream.range( 0, ySize ).forEach( y ->
+				IntStream.range( 0, xSize ).forEach( x -> array.set( t, y, x, tyxValues.get( t ).get( create1DIndex( y, x, xSize ) ).floatValue() ) )
+			)
+		);
 		return array;
 	}
 
@@ -304,11 +304,11 @@ public class NetCDFUtils {
 	public static ArrayDouble.D3 create3DArrayDouble( List<List<BigDecimal>> tyxValues, int ySize, int xSize ){
 		Preconditions.checkNotNull( tyxValues, buildNotNullMessage( "tyxValues" ) );
 		ArrayDouble.D3 array = empty3DArrayDouble( tyxValues.size(), ySize, xSize );
-		IntStream.range( 0, tyxValues.size()  ).forEach( t -> {
-			IntStream.range( 0, ySize ).forEach( y -> {
-				IntStream.range( 0, xSize ).forEach( x -> array.set( t, y, x, tyxValues.get( t ).get( create1DIndex( y, x, xSize ) ).doubleValue() ) );
-			} );
-		} );
+		IntStream.range( 0, tyxValues.size()  ).forEach( t ->
+			IntStream.range( 0, ySize ).forEach( y ->
+				IntStream.range( 0, xSize ).forEach( x -> array.set( t, y, x, tyxValues.get( t ).get( create1DIndex( y, x, xSize ) ).doubleValue() ) )
+			)
+		);
 		return array;
 	}
 
@@ -733,9 +733,9 @@ public class NetCDFUtils {
 		int xSize = shape[ 1 ];
 		Index index = values.getIndex();
 
-		range( 0, ySize, invertedY ).forEach( y -> {
-			IntStream.range( 0, xSize ).forEach( x -> grid.add( NetCDFUtils.readArrayValue( values, index.set( y, x ), scale, offset, missing ) ) );
-		} );
+		range( 0, ySize, invertedY ).forEach( y ->
+			IntStream.range( 0, xSize ).forEach( x -> grid.add( NetCDFUtils.readArrayValue( values, index.set( y, x ), scale, offset, missing ) ) )
+		);
 		return grid;
 	}
 
@@ -865,9 +865,9 @@ public class NetCDFUtils {
 		int xSize = shape[ 2 ];
 		Index index = values.getIndex();
 
-		range( 0, ySize, invertedY ).forEach( y -> {
-			IntStream.range( 0, xSize ).forEach( x -> grid.add( NetCDFUtils.readArrayValue( values, index.set( tIndex, y, x ), scale, offset, missing ) ) );
-		} );
+		range( 0, ySize, invertedY ).forEach( y ->
+			IntStream.range( 0, xSize ).forEach( x -> grid.add( NetCDFUtils.readArrayValue( values, index.set( tIndex, y, x ), scale, offset, missing ) ) )
+		);
 		return grid;
 	}
 

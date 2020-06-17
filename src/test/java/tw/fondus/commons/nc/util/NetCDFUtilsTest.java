@@ -48,7 +48,7 @@ public class NetCDFUtilsTest {
 
 		BigDecimal packageValue = NetCDFUtils.packageValue( originalValue, scale, offset );
 		Assert.assertEquals( 1700, packageValue.shortValue() );
-		Assert.assertTrue( originalValue.compareTo( NetCDFUtils.originalValue( packageValue, scale, offset ) ) == 0 );
+		Assert.assertEquals( 0, originalValue.compareTo( NetCDFUtils.originalValue( packageValue, scale, offset ) ) );
 	}
 
 	@Test
@@ -79,11 +79,11 @@ public class NetCDFUtilsTest {
 		Assert.assertNotNull( NetCDFUtils.empty2DArrayInteger( 12, 11 ) );
 
 		List<BigDecimal> yxValues = new ArrayList<>();
-		IntStream.range( 0, 12 ).forEach( j -> {
-			IntStream.range( 0, 11 ).forEach( i -> {
-				yxValues.add( new BigDecimal( Math.random() ) );
-			} );
-		} );
+		IntStream.range( 0, 12 ).forEach( j ->
+			IntStream.range( 0, 11 ).forEach( i ->
+				yxValues.add( BigDecimal.valueOf( Math.random() ) )
+			)
+		);
 		Assert.assertNotNull( NetCDFUtils.create2DArrayFloat( yxValues, 12, 11 ) );
 		Assert.assertNotNull( NetCDFUtils.create2DArrayInteger( yxValues, 12, 11 ) );
 		Assert.assertNotNull( NetCDFUtils.create2DArrayShort( yxValues, 12, 11 ) );
@@ -98,11 +98,11 @@ public class NetCDFUtilsTest {
 		List<List<BigDecimal>> tyxValues = new ArrayList<>();
 		IntStream.range( 0, 10 ).forEach( t -> {
 			tyxValues.add( new ArrayList<>() );
-			IntStream.range( 0, 12 ).forEach( j -> {
-				IntStream.range( 0, 11 ).forEach( i -> {
-					tyxValues.get( t ).add( new BigDecimal( Math.random() ) );
-				} );
-			} );
+			IntStream.range( 0, 12 ).forEach( j ->
+				IntStream.range( 0, 11 ).forEach( i ->
+					tyxValues.get( t ).add( BigDecimal.valueOf( Math.random() ) )
+				)
+			);
 		} );
 		Assert.assertNotNull( NetCDFUtils.create3DArrayFloat( tyxValues, 12, 11 ) );
 		Assert.assertNotNull( NetCDFUtils.create3DArrayInteger( tyxValues, 12, 11 ) );
