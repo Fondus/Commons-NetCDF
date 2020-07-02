@@ -36,6 +36,7 @@ public class VariableAttribute {
 	public static final String NAME_Y_TWD97 = "y coordinate according to TWD 1997";
 	public static final String NAME_X_TWD97 = "x coordinate according to TWD 1997";
 	public static final String UNITS_TIME_MINUTES = "minutes since 1970-01-01 00:00:00.0 +0000";
+	public static final String UNITS_TIME_HOURS = "hours since 1970-01-01 00:00:00.0 +0000";
 	public static final String UNITS_Y_WGS84 = "degrees_north";
 	public static final String UNITS_X_WGS84 = "degrees_east";
 	public static final String UNITS_TWD97 = "m";
