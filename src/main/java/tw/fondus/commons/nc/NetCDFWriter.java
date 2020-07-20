@@ -16,7 +16,7 @@ import java.io.IOException;
  *
  */
 public class NetCDFWriter implements AutoCloseable {
-	private NetcdfFileWriter writer;
+	private final NetcdfFileWriter writer;
 
 	public NetCDFWriter( @Nonnull NetcdfFileWriter writer ) {
 		this.writer = writer;

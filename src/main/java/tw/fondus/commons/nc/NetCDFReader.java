@@ -28,7 +28,7 @@ import java.util.stream.IntStream;
  *
  */
 public class NetCDFReader extends AbstractReader {
-	private Optional<NetcdfFile> optNetCDF;
+	private final Optional<NetcdfFile> optNetCDF;
 
 	/**
 	 * The constructor.
@@ -364,7 +364,8 @@ public class NetCDFReader extends AbstractReader {
 	 */
 	public boolean is2D() {
 		return ( this.hasDimension( DimensionName.X ) && this.hasDimension( DimensionName.Y ) ) ||
-				( this.hasDimension( DimensionName.COL ) && this.hasDimension( DimensionName.ROW ) );
+				( this.hasDimension( DimensionName.COL ) && this.hasDimension( DimensionName.ROW ) ) ||
+				( this.hasDimension( DimensionName.LON ) && this.hasDimension( DimensionName.LAT ) );
 	}
 	
 	/**
@@ -453,7 +454,6 @@ public class NetCDFReader extends AbstractReader {
 	 * @since 1.1.6
 	 */
 	private Optional<List<BigDecimal>> findOneDimensionArrayValues( String variableName ){
-		List<BigDecimal> values = new ArrayList<>();
 		return this.findVariable( variableName )
 				.map( variable -> {
 					try {
