@@ -2,6 +2,8 @@ package tw.fondus.commons.nc.util;
 
 import com.google.common.base.Preconditions;
 import tw.fondus.commons.nc.util.key.VariableAttribute;
+import tw.fondus.commons.nc.vo.index.IndexTYX;
+import tw.fondus.commons.nc.vo.index.IndexYX;
 import ucar.ma2.Array;
 import ucar.ma2.ArrayChar;
 import ucar.ma2.ArrayDouble;
@@ -19,8 +21,10 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 /**
  * The commons tools of NetCDF.
@@ -114,7 +118,7 @@ public class NetCDFUtils {
 	public static ArrayShort.D1 create1DArrayShort( List<BigDecimal> values ){
 		Preconditions.checkNotNull( values, buildNotNullMessage( "values" ) );
 		ArrayShort.D1 array = empty1DArrayShort( values.size() );
-		IntStream.range( 0, values.size() ).forEach( i -> array.set( i, values.get( i ).shortValue() ) );
+		parallelRange( values.size(), false ).forEachOrdered( i -> array.set( i, values.get( i ).shortValue() ) );
 		return array;
 	}
 
@@ -128,7 +132,7 @@ public class NetCDFUtils {
 	public static ArrayInt.D1 create1DArrayInteger( List<BigDecimal> values ){
 		Preconditions.checkNotNull( values, buildNotNullMessage( "values" ) );
 		ArrayInt.D1 array = empty1DArrayInteger( values.size() );
-		IntStream.range( 0, values.size() ).forEach( i -> array.set( i, values.get( i ).intValue() ) );
+		parallelRange( values.size(), false ).forEachOrdered( i -> array.set( i, values.get( i ).intValue() ) );
 		return array;
 	}
 
@@ -142,7 +146,7 @@ public class NetCDFUtils {
 	public static ArrayFloat.D1 create1DArrayFloat( List<BigDecimal> values ){
 		Preconditions.checkNotNull( values, buildNotNullMessage( "values" ) );
 		ArrayFloat.D1 array = empty1DArrayFloat( values.size() );
-		IntStream.range( 0, values.size() ).forEach( i -> array.set( i, values.get( i ).floatValue() ) );
+		parallelRange( values.size(), false ).forEachOrdered( i -> array.set( i, values.get( i ).floatValue() ) );
 		return array;
 	}
 
@@ -156,7 +160,7 @@ public class NetCDFUtils {
 	public static ArrayDouble.D1 create1DArrayDouble( List<BigDecimal> values ){
 		Preconditions.checkNotNull( values, buildNotNullMessage( "values" ) );
 		ArrayDouble.D1 array = empty1DArrayDouble( values.size() );
-		IntStream.range( 0, values.size() ).forEach( i -> array.set( i, values.get( i ).doubleValue() ) );
+		parallelRange( values.size(), false ).forEachOrdered( i -> array.set( i, values.get( i ).doubleValue() ) );
 		return array;
 	}
 
@@ -172,9 +176,12 @@ public class NetCDFUtils {
 	public static ArrayShort.D2 create2DArrayShort( List<BigDecimal> yxValues, int ySize, int xSize ){
 		Preconditions.checkNotNull( yxValues, buildNotNullMessage( "yxValues" ) );
 		ArrayShort.D2 array = empty2DArrayShort( ySize, xSize );
-		IntStream.range( 0, ySize ).forEach( y ->
-			IntStream.range( 0, xSize ).forEach( x -> array.set( y, x, yxValues.get( create1DIndex( y, x, xSize ) ).shortValue() ) )
-		);
+		parallelRange2D( ySize, xSize, false )
+				.forEachOrdered( index -> {
+					int x = index.getCol();
+					int y = index.getRow();
+					array.set( y, x, yxValues.get( create1DIndex( y, x, xSize ) ).shortValue() );
+				});
 		return array;
 	}
 
@@ -190,9 +197,12 @@ public class NetCDFUtils {
 	public static ArrayInt.D2 create2DArrayInteger( List<BigDecimal> yxValues, int ySize, int xSize ){
 		Preconditions.checkNotNull( yxValues, buildNotNullMessage( "yxValues" ) );
 		ArrayInt.D2 array = empty2DArrayInteger( ySize, xSize );
-		IntStream.range( 0, ySize ).forEach( y ->
-			IntStream.range( 0, xSize ).forEach( x -> array.set( y, x, yxValues.get( create1DIndex( y, x, xSize ) ).intValue()) )
-		);
+		parallelRange2D( ySize, xSize, false )
+				.forEachOrdered( index -> {
+					int x = index.getCol();
+					int y = index.getRow();
+					array.set( y, x, yxValues.get( create1DIndex( y, x, xSize ) ).intValue() );
+				});
 		return array;
 	}
 
@@ -208,9 +218,12 @@ public class NetCDFUtils {
 	public static ArrayFloat.D2 create2DArrayFloat( List<BigDecimal> yxValues, int ySize, int xSize ){
 		Preconditions.checkNotNull( yxValues, buildNotNullMessage( "yxValues" ) );
 		ArrayFloat.D2 array = empty2DArrayFloat( ySize, xSize );
-		IntStream.range( 0, ySize ).forEach( y ->
-			IntStream.range( 0, xSize ).forEach( x -> array.set( y, x, yxValues.get( create1DIndex( y, x, xSize ) ).floatValue() ) )
-		);
+		parallelRange2D( ySize, xSize, false )
+				.forEachOrdered( index -> {
+					int x = index.getCol();
+					int y = index.getRow();
+					array.set( y, x, yxValues.get( create1DIndex( y, x, xSize ) ).floatValue() );
+				});
 		return array;
 	}
 
@@ -226,9 +239,12 @@ public class NetCDFUtils {
 	public static ArrayDouble.D2 create2DArrayDouble( List<BigDecimal> yxValues, int ySize, int xSize ){
 		Preconditions.checkNotNull( yxValues, buildNotNullMessage( "yxValues" ) );
 		ArrayDouble.D2 array = empty2DArrayDouble( ySize, xSize );
-		IntStream.range( 0, ySize ).forEach( y ->
-			IntStream.range( 0, xSize ).forEach( x -> array.set( y, x, yxValues.get( create1DIndex( y, x, xSize ) ).doubleValue() ) )
-		);
+		parallelRange2D( ySize, xSize, false )
+				.forEachOrdered( index -> {
+					int x = index.getCol();
+					int y = index.getRow();
+					array.set( y, x, yxValues.get( create1DIndex( y, x, xSize ) ).doubleValue() );
+				});
 		return array;
 	}
 
@@ -244,11 +260,13 @@ public class NetCDFUtils {
 	public static ArrayShort.D3 create3DArrayShort( List<List<BigDecimal>> tyxValues, int ySize, int xSize ){
 		Preconditions.checkNotNull( tyxValues, buildNotNullMessage( "tyxValues" ) );
 		ArrayShort.D3 array = empty3DArrayShort( tyxValues.size(), ySize, xSize );
-		IntStream.range( 0, tyxValues.size() ).forEach( t ->
-			IntStream.range( 0, ySize ).forEach( y ->
-				IntStream.range( 0, xSize ).forEach( x -> array.set( t, y, x, tyxValues.get( t ).get( create1DIndex( y, x, xSize ) ).shortValue() ) )
-			)
-		);
+		parallelRange3D( tyxValues.size(), ySize, xSize )
+			.forEachOrdered( index -> {
+				int t = index.getTime();
+				int x = index.getCol();
+				int y = index.getRow();
+				array.set( t, y, x, tyxValues.get( t ).get( create1DIndex( y, x, xSize ) ).shortValue() );
+			} );
 		return array;
 	}
 
@@ -264,11 +282,13 @@ public class NetCDFUtils {
 	public static ArrayInt.D3 create3DArrayInteger( List<List<BigDecimal>> tyxValues, int ySize, int xSize ){
 		Preconditions.checkNotNull( tyxValues, buildNotNullMessage( "tyxValues" ) );
 		ArrayInt.D3 array = empty3DArrayInteger( tyxValues.size(), ySize, xSize );
-		IntStream.range( 0, tyxValues.size() ).forEach( t ->
-			IntStream.range( 0, ySize ).forEach( y ->
-				IntStream.range( 0, xSize ).forEach( x -> array.set( t, y, x, tyxValues.get( t ).get( create1DIndex( y, x, xSize ) ).intValue() ) )
-			)
-		);
+		parallelRange3D( tyxValues.size(), ySize, xSize )
+				.forEachOrdered( index -> {
+					int t = index.getTime();
+					int x = index.getCol();
+					int y = index.getRow();
+					array.set( t, y, x, tyxValues.get( t ).get( create1DIndex( y, x, xSize ) ).intValue() );
+				} );
 		return array;
 	}
 
@@ -284,11 +304,13 @@ public class NetCDFUtils {
 	public static ArrayFloat.D3 create3DArrayFloat( List<List<BigDecimal>> tyxValues, int ySize, int xSize ){
 		Preconditions.checkNotNull( tyxValues, buildNotNullMessage( "tyxValues" ) );
 		ArrayFloat.D3 array = empty3DArrayFloat( tyxValues.size(), ySize, xSize );
-		IntStream.range( 0, tyxValues.size() ).forEach( t ->
-			IntStream.range( 0, ySize ).forEach( y ->
-				IntStream.range( 0, xSize ).forEach( x -> array.set( t, y, x, tyxValues.get( t ).get( create1DIndex( y, x, xSize ) ).floatValue() ) )
-			)
-		);
+		parallelRange3D( tyxValues.size(), ySize, xSize )
+				.forEachOrdered( index -> {
+					int t = index.getTime();
+					int x = index.getCol();
+					int y = index.getRow();
+					array.set( t, y, x, tyxValues.get( t ).get( create1DIndex( y, x, xSize ) ).floatValue() );
+				} );
 		return array;
 	}
 
@@ -304,11 +326,13 @@ public class NetCDFUtils {
 	public static ArrayDouble.D3 create3DArrayDouble( List<List<BigDecimal>> tyxValues, int ySize, int xSize ){
 		Preconditions.checkNotNull( tyxValues, buildNotNullMessage( "tyxValues" ) );
 		ArrayDouble.D3 array = empty3DArrayDouble( tyxValues.size(), ySize, xSize );
-		IntStream.range( 0, tyxValues.size()  ).forEach( t ->
-			IntStream.range( 0, ySize ).forEach( y ->
-				IntStream.range( 0, xSize ).forEach( x -> array.set( t, y, x, tyxValues.get( t ).get( create1DIndex( y, x, xSize ) ).doubleValue() ) )
-			)
-		);
+		parallelRange3D( tyxValues.size(), ySize, xSize )
+				.forEachOrdered( index -> {
+					int t = index.getTime();
+					int x = index.getCol();
+					int y = index.getRow();
+					array.set( t, y, x, tyxValues.get( t ).get( create1DIndex( y, x, xSize ) ).doubleValue() );
+				} );
 		return array;
 	}
 
@@ -525,6 +549,7 @@ public class NetCDFUtils {
 		ArrayChar values = (ArrayChar) stringVariable.read();
 		Index index = values.getIndex();
 		return IntStream.range( 0, shape[0] )
+				.parallel()
 				.mapToObj( i -> values.getString( index.set0( i ) ) )
 				.collect( Collectors.toList() );
 	}
@@ -667,6 +692,7 @@ public class NetCDFUtils {
 		validateArray( values, scale, offset, missing );
 		int length = values.getShape()[0];
 		return IntStream.range( 0, length )
+				.parallel()
 				.mapToObj( i -> NetCDFUtils.readArrayValue( values, i, scale, offset, missing ) )
 				.collect( Collectors.toList());
 	}
@@ -733,9 +759,11 @@ public class NetCDFUtils {
 		int xSize = shape[ 1 ];
 		Index index = values.getIndex();
 
-		range( 0, ySize, invertedY ).forEach( y ->
-			IntStream.range( 0, xSize ).forEach( x -> grid.add( NetCDFUtils.readArrayValue( values, index.set( y, x ), scale, offset, missing ) ) )
-		);
+		parallelRange2D( ySize, xSize, invertedY ).forEachOrdered( index2D -> {
+			int x = index2D.getCol();
+			int y = index2D.getRow();
+			grid.add( NetCDFUtils.readArrayValue( values, index.set( y, x ), scale, offset, missing ) );
+		} );
 		return grid;
 	}
 
@@ -794,6 +822,7 @@ public class NetCDFUtils {
 
 		int timeSize = shape[ 0 ];
 		return IntStream.range( 0, timeSize )
+				.parallel()
 				.mapToObj( time -> sliceTDimensionArrayYXValues( values, time, scale, offset, missing, invertedY ) )
 				.collect( Collectors.toList() );
 	}
@@ -865,9 +894,11 @@ public class NetCDFUtils {
 		int xSize = shape[ 2 ];
 		Index index = values.getIndex();
 
-		range( 0, ySize, invertedY ).forEach( y ->
-			IntStream.range( 0, xSize ).forEach( x -> grid.add( NetCDFUtils.readArrayValue( values, index.set( tIndex, y, x ), scale, offset, missing ) ) )
-		);
+		parallelRange2D( ySize, xSize, invertedY ).forEachOrdered( index2D -> {
+			int x = index2D.getCol();
+			int y = index2D.getRow();
+			grid.add( NetCDFUtils.readArrayValue( values, index.set( tIndex, y, x ), scale, offset, missing ) );
+		} );
 		return grid;
 	}
 
@@ -904,6 +935,7 @@ public class NetCDFUtils {
 		Index index = values.getIndex();
 
 		return IntStream.range( 0, tSize )
+				.parallel()
 				.mapToObj( time -> NetCDFUtils.readArrayValue( values, index.set( time, stationIndex ), scale, offset, missing ) )
 				.collect( Collectors.toList() );
 	}
@@ -1011,14 +1043,61 @@ public class NetCDFUtils {
 	/**
 	 * Get int stream with range.
 	 *
-	 * @param from from index
 	 * @param to to index
 	 * @param inverted is inverted or not
 	 * @return IntStream
 	 * @since 1.1.3
 	 */
-	private static IntStream range( int from, int to, boolean inverted ){
-		return inverted ? IntStream.range( from, to ).map( i -> to - i + from - 1 ) : IntStream.range( from, to );
+	@SuppressWarnings( "unused" )
+	private static IntStream range( int to, boolean inverted ){
+		return inverted ? IntStream.range( 0, to ).map( i -> to - i - 1 ) : IntStream.range( 0, to );
+	}
+
+	/**
+	 * Get int parallel stream with range.
+	 *
+	 * @param to to index
+	 * @param inverted is inverted or not
+	 * @return IntStream
+	 * @since 1.2.0
+	 */
+	private static IntStream parallelRange( int to, boolean inverted ){
+		return inverted ? IntStream.range( 0, to ).parallel().map( i -> to - i - 1 ) : IntStream.range( 0, to ).parallel();
+	}
+
+	/**
+	 * Get two dimensional index parallel stream with range.
+	 *
+	 * @param rows size of row
+	 * @param cols size of col
+	 * @param inverted is inverted or not
+	 * @return stream of two dimensional index
+	 * @since 1.2.0
+	 */
+	private static Stream<IndexYX> parallelRange2D( int rows, int cols, boolean inverted ){
+		return parallelRange( rows, inverted )
+				.mapToObj( y -> IntStream.range( 0, cols ).parallel().mapToObj( x -> new IndexYX( x, y ) ) )
+				.flatMap( Function.identity() );
+	}
+
+	/**
+	 * Get two dimensional index parallel stream with range.
+	 *
+	 * @param times times
+	 * @param rows size of row
+	 * @param cols size of col
+	 * @return stream of three dimensional index
+	 * @since 1.2.0
+	 */
+	public static Stream<IndexTYX> parallelRange3D( int times, int rows, int cols ){
+		return IntStream.range( 0, times )
+				.parallel()
+				.mapToObj( t -> IntStream.range( 0, rows )
+						.parallel()
+						.mapToObj( y -> IntStream.range( 0, cols ).parallel().mapToObj( x -> new IndexTYX( x, y, t ) ) )
+						.flatMap( Function.identity() )
+				)
+				.flatMap( Function.identity() );
 	}
 	
 	/**
