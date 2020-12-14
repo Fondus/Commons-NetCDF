@@ -183,8 +183,9 @@ public class NetCDFReader extends AbstractReader {
 				try {
 					Array array = variable.read();
 					IntStream.range( 0, (int) array.getSize() )
+						.parallel()
 						.mapToObj( i -> array.getLong( i ) * constFactor )
-						.forEach( times::add );
+						.forEachOrdered( times::add );
 				} catch (IOException e) {
 					// nothing to do
 				}
