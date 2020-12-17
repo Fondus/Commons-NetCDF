@@ -51,17 +51,17 @@ public class GridDataReader extends AbstractReader {
 	
 	@Override
 	public NetcdfFile getNetCDF() {
-		return this.orElseThrow( this.optGrid.map( dataset -> dataset.getNetcdfFile() ), MESSAGE_NOT_OPEN );
+		return this.orElseThrow( this.optGrid.map( GridDataset::getNetcdfFile ), MESSAGE_NOT_OPEN );
 	}
 	
 	@Override
 	public String getPath() {
-		return this.orElseThrow( this.optGrid.map( dataset -> dataset.getLocation() ), MESSAGE_NOT_OPEN );
+		return this.orElseThrow( this.optGrid.map( GridDataset::getLocation ), MESSAGE_NOT_OPEN );
 	}
 	
 	@Override
 	public List<Attribute> getGlobalAttributes() {
-		return this.orElseThrow( this.optGrid.map( dataset -> dataset.getGlobalAttributes() ), MESSAGE_NOT_OPEN );
+		return this.orElseThrow( this.optGrid.map( GridDataset::getGlobalAttributes ), MESSAGE_NOT_OPEN );
 	}
 	
 	/**
@@ -70,7 +70,7 @@ public class GridDataReader extends AbstractReader {
 	 * @return list of grid data type
 	 */
 	public List<GridDatatype> getGridDataTypes() {
-		return this.orElseThrow( this.optGrid.map( dataset -> dataset.getGrids() ), MESSAGE_NOT_OPEN );
+		return this.orElseThrow( this.optGrid.map( GridDataset::getGrids ), MESSAGE_NOT_OPEN );
 	}
 	
 	/**
@@ -79,7 +79,7 @@ public class GridDataReader extends AbstractReader {
 	 * @return list of variable
 	 */
 	public List<VariableSimpleIF> getVariables() {
-		return this.orElseThrow( this.optGrid.map( dataset -> dataset.getDataVariables() ), MESSAGE_NOT_OPEN );
+		return this.orElseThrow( this.optGrid.map( GridDataset::getDataVariables ), MESSAGE_NOT_OPEN );
 	}
 	
 	/**
@@ -88,8 +88,7 @@ public class GridDataReader extends AbstractReader {
 	 * @return bounding box, it's optional
 	 */
 	public Optional<LatLonRect> getBoundingBox() {
-		return this.validFileOpened( this.optGrid,
-				dataset -> dataset.getBoundingBox() );
+		return this.validFileOpened( this.optGrid, GridDataset::getBoundingBox );
 	}
 	
 	/**
@@ -98,8 +97,7 @@ public class GridDataReader extends AbstractReader {
 	 * @return start calendar date, it's optional
 	 */
 	public Optional<CalendarDate> getDateStart() {
-		return this.validFileOpened( this.optGrid,
-				dataset -> dataset.getCalendarDateStart() );
+		return this.validFileOpened( this.optGrid, GridDataset::getCalendarDateStart );
 	}
 	
 	/**
@@ -108,8 +106,7 @@ public class GridDataReader extends AbstractReader {
 	 * @return end calendar date, it's optional
 	 */
 	public Optional<CalendarDate> getDateEnd() {
-		return this.validFileOpened( this.optGrid,
-				dataset -> dataset.getCalendarDateEnd() );
+		return this.validFileOpened( this.optGrid, GridDataset::getCalendarDateEnd );
 	}
 	
 	@Override
@@ -165,7 +162,7 @@ public class GridDataReader extends AbstractReader {
 	
 	@Override
 	public String toString() {
-		return this.orElseThrow( this.optGrid.map( dataset -> dataset.getDetailInfo() ), MESSAGE_NOT_OPEN );
+		return this.orElseThrow( this.optGrid.map( GridDataset::getDetailInfo ), MESSAGE_NOT_OPEN );
 	}
 	
 	@Override

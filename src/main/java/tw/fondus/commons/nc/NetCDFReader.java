@@ -183,8 +183,9 @@ public class NetCDFReader extends AbstractReader {
 				try {
 					Array array = variable.read();
 					IntStream.range( 0, (int) array.getSize() )
+						.parallel()
 						.mapToObj( i -> array.getLong( i ) * constFactor )
-						.forEach( times::add );
+						.forEachOrdered( times::add );
 				} catch (IOException e) {
 					// nothing to do
 				}
@@ -193,35 +194,47 @@ public class NetCDFReader extends AbstractReader {
 	}
 
 	/**
-	 * Find the y coordinates from the NetCDF file.
+	 * Find the y coordinates from the NetCDF file.<br/>
+	 * The variable read weight is <b>y -> lat</b>.
 	 *
 	 * @return y coordinates, it's optional
 	 * @since 1.1.6
 	 */
 	public Optional<List<BigDecimal>> findYCoordinates(){
-		if ( this.hasDimension( DimensionName.Y ) ) {
-			return this.findOneDimensionArrayValues( VariableName.Y );
-		}
-		if ( this.hasDimension( DimensionName.ROW ) || this.hasDimension( DimensionName.LAT )  ) {
-			return this.findOneDimensionArrayValues( VariableName.LAT );
-		}
-		return Optional.empty();
+		Optional<List<BigDecimal>> optional = this.findOneDimensionArrayValues( VariableName.Y );
+		return optional.isPresent() ? optional : this.findOneDimensionArrayValues( VariableName.LAT );
 	}
 
 	/**
-	 * Find the x coordinates from the NetCDF file.
+	 * Find the lat coordinates from the NetCDF file.
+	 *
+	 * @return lat coordinates, it's optional
+	 * @since 1.1.9
+	 */
+	public Optional<List<BigDecimal>> findLatCoordinates(){
+		return this.findOneDimensionArrayValues( VariableName.LAT );
+	}
+
+	/**
+	 * Find the x coordinates from the NetCDF file.<br/>
+	 * The variable read weight is <b>x -> lon</b>.
 	 *
 	 * @return x coordinates, it's optional
 	 * @since 1.1.6
 	 */
 	public Optional<List<BigDecimal>> findXCoordinates(){
-		if ( this.hasDimension( DimensionName.X ) ) {
-			return this.findOneDimensionArrayValues( VariableName.X );
-		}
-		if ( this.hasDimension( DimensionName.COL ) || this.hasDimension( DimensionName.LON ) ) {
-			return this.findOneDimensionArrayValues( VariableName.LON );
-		}
-		return Optional.empty();
+		Optional<List<BigDecimal>> optional = this.findOneDimensionArrayValues( VariableName.X );
+		return optional.isPresent() ? optional : this.findOneDimensionArrayValues( VariableName.LON );
+	}
+
+	/**
+	 * Find the lon coordinates from the NetCDF file.
+	 *
+	 * @return lon coordinates, it's optional
+	 * @since 1.1.9
+	 */
+	public Optional<List<BigDecimal>> findLonCoordinates(){
+		return this.findOneDimensionArrayValues( VariableName.LON );
 	}
 
 	/**
@@ -242,7 +255,8 @@ public class NetCDFReader extends AbstractReader {
 	}
 
 	/**
-	 * Read the Y variable first value, it's usually is most bottom value.
+	 * Read the Y variable first value, it's usually is most bottom value.<br/>
+	 * The variable read weight is <b>y -> lat</b>.
 	 *
 	 * @return first y value, it's optional
 	 * @since 1.1.1
@@ -258,7 +272,8 @@ public class NetCDFReader extends AbstractReader {
 	}
 
 	/**
-	 * Read the X variable first value, it's usually is most left value.
+	 * Read the X variable first value, it's usually is most left value. <br/>
+	 * The variable read weight is <b>x -> lon</b>.
 	 *
 	 * @return first x value, it's optional
 	 * @since 1.1.1
@@ -274,7 +289,8 @@ public class NetCDFReader extends AbstractReader {
 	}
 
 	/**
-	 * Read the Y variable last value, it's usually is most top value.
+	 * Read the Y variable last value, it's usually is most top value. <br/
+	 * The variable read weight is <b>y -> lat</b>.
 	 *
 	 * @return last y value, it's optional
 	 * @since 1.1.6
@@ -290,7 +306,8 @@ public class NetCDFReader extends AbstractReader {
 	}
 
 	/**
-	 * Read the X variable last value, it's usually is most right value.
+	 * Read the X variable last value, it's usually is most right value. <br/
+	 * The variable read weight is <b>x -> lon</b>.
 	 *
 	 * @return last x value, it's optional
 	 * @since 1.1.6
@@ -369,7 +386,8 @@ public class NetCDFReader extends AbstractReader {
 	}
 	
 	/**
-	 * Check the NetCDF is one dimension file.
+	 * Check the NetCDF is one dimension file. <br/>
+	 * It's check base has station dimension and is not 2D.
 	 * 
 	 * @return is 1D file
 	 * @since 0.7.0
@@ -379,14 +397,14 @@ public class NetCDFReader extends AbstractReader {
 	}
 	
 	/**
-	 * Check the NetCDF coordinate system is WGS84.
+	 * Check the NetCDF coordinate system is WGS84. <br/>
+	 * It's check base has X variable and long_name contain WGS 1984.
 	 * 
 	 * @return is WGS84
 	 * @since 0.7.0
 	 */
 	public boolean isWGS84() {
-		return this.hasVariable( VariableName.LAT ) ||
-				this.findVariable( VariableName.X )
+		return this.findVariable( VariableName.X )
 						.map( variable -> NetCDFUtils.readVariableAttribute( variable, VariableAttribute.KEY_NAME_LONG, "" ) )
 						.map( attribute -> attribute.contains( VariableAttribute.NAME_X_WGS84 ) )
 						.orElse( false );

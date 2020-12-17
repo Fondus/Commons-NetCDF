@@ -42,6 +42,12 @@ public class NetCDFReaderTest {
 			Assert.assertTrue( reader.is2D() );
 			Assert.assertFalse( reader.is1D() );
 		}
+
+		try ( NetCDFReader reader = NetCDFReader.readDataset( "src/test/resources/Tide_6M_CWB.nc" ) ){
+			Assert.assertFalse( reader.isWGS84() );
+			Assert.assertFalse( reader.is2D() );
+			Assert.assertTrue( reader.is1D() );
+		}
 	}
 
 	@Test
@@ -129,6 +135,14 @@ public class NetCDFReaderTest {
 				reader.findFirstX().ifPresent( firstX -> Assert.assertEquals( firstX, x.get( 0 ) ) );
 				reader.findLastX().ifPresent( lastX -> Assert.assertEquals( lastX, x.get( x.size() - 1 ) ) );
 			} );
+		}
+
+		try ( NetCDFReader reader = NetCDFReader.read( "src/test/resources/Tide_6M_CWB.nc" )){
+			Optional<List<BigDecimal>> optionalY = reader.findLatCoordinates();
+			Optional<List<BigDecimal>> optionalX = reader.findLonCoordinates();
+
+			Assert.assertTrue( optionalY.isPresent() );
+			Assert.assertTrue( optionalX.isPresent() );
 		}
 	}
 
