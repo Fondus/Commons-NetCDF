@@ -165,21 +165,6 @@ public class NetCDFUtils {
 	}
 
 	/**
-	 * Create the 1D char array with strings, the size is depend on collection.
-	 *
-	 * @param strings collection of string
-	 * @return 1D char array
-	 * @since 1.2.1.1
-	 */
-	public static ArrayChar.D1 create1DArrayChar( List<String> strings ){
-		Preconditions.checkNotNull( strings );
-		Preconditions.checkState( strings.size() > 0 );
-		ArrayChar.D1 array = empty1DArrayChar( strings.size() );
-		IntStream.range( 0, strings.size() ).forEach( i -> array.setString( i, strings.get( i ) ) );
-		return array;
-	}
-
-	/**
 	 * Create the 2D short array with y-x order one dimension data values.
 	 *
 	 * @param yxValues yx two dimension values

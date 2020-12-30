@@ -94,7 +94,6 @@ public class NetCDFUtilsTest {
 		List<String> strings = new ArrayList<>();
 		strings.add( "hello" );
 		strings.add( "world" );
-		Assert.assertNotNull( NetCDFUtils.create1DArrayChar( strings ) );
 		Assert.assertNotNull( NetCDFUtils.create2DArrayChar( strings, 11 ) );
 
 		// 3D
