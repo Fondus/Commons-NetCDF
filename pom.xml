@@ -3,7 +3,7 @@
 
 	<groupId>tw.fondus.commons</groupId>
 	<artifactId>commons-netcdf</artifactId>
-	<version>1.2.2-SNAPSHOT</version>
+	<version>1.2.1.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>The Commons-NetCDF Library</name>
