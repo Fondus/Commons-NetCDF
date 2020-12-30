@@ -165,6 +165,21 @@ public class NetCDFUtils {
 	}
 
 	/**
+	 * Create the 1D char array with strings, the size is depend on collection.
+	 *
+	 * @param strings collection of string
+	 * @return 1D char array
+	 * @since 1.2.1.1
+	 */
+	public static ArrayChar.D1 create1DArrayChar( List<String> strings ){
+		Preconditions.checkNotNull( strings );
+		Preconditions.checkState( strings.size() > 0 );
+		ArrayChar.D1 array = empty1DArrayChar( strings.size() );
+		IntStream.range( 0, strings.size() ).forEach( i -> array.setString( i, strings.get( i ) ) );
+		return array;
+	}
+
+	/**
 	 * Create the 2D short array with y-x order one dimension data values.
 	 *
 	 * @param yxValues yx two dimension values
@@ -245,6 +260,22 @@ public class NetCDFUtils {
 					int y = index.getRow();
 					array.set( y, x, yxValues.get( create1DIndex( y, x, xSize ) ).doubleValue() );
 				});
+		return array;
+	}
+
+	/**
+	 * Create the 2D char array with order-string length, the order size is depend on collection.
+	 *
+	 * @param strings collection of string
+	 * @param stringSize size of string dimension
+	 * @return 2D char array
+	 * @since 1.2.1.1
+	 */
+	public static ArrayChar.D2 create2DArrayChar( List<String> strings, int stringSize ){
+		Preconditions.checkNotNull( strings );
+		Preconditions.checkState( strings.size() > 0 );
+		ArrayChar.D2 array = empty2DArrayChar( strings.size(), stringSize );
+		IntStream.range( 0, strings.size() ).forEach( i -> array.setString( i, strings.get( i ) ) );
 		return array;
 	}
 
@@ -385,6 +416,18 @@ public class NetCDFUtils {
 	}
 
 	/**
+	 * Create the empty 1D char array with size.
+	 *
+	 * @param size size
+	 * @return empty 1D char array
+	 * @since 1.2.1.1
+	 */
+	public static ArrayChar.D1 empty1DArrayChar( int size ){
+		Preconditions.checkArgument( size > 0 );
+		return new ArrayChar.D1( size );
+	}
+
+	/**
 	 * Create the empty 2D short array with size.
 	 *
 	 * @param ySize y dimension size
@@ -434,6 +477,19 @@ public class NetCDFUtils {
 	public static ArrayDouble.D2 empty2DArrayDouble( int ySize, int xSize ){
 		Preconditions.checkArgument( ySize > 0 && xSize > 0 );
 		return new ArrayDouble.D2( ySize, xSize );
+	}
+
+	/**
+	 * Create the empty 2D char array with size.
+	 *
+	 * @param orderSize order size
+	 * @param stringSize string size
+	 * @return empty 2D char array
+	 * @since 1.2.1.1
+	 */
+	public static ArrayChar.D2 empty2DArrayChar( int orderSize, int stringSize ){
+		Preconditions.checkArgument( orderSize > 0 && stringSize > 0 );
+		return new ArrayChar.D2( orderSize, stringSize );
 	}
 
 	/**

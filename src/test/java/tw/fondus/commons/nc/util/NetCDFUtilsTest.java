@@ -64,6 +64,7 @@ public class NetCDFUtilsTest {
 		Assert.assertNotNull( NetCDFUtils.empty1DArrayFloat( 1 ) );
 		Assert.assertNotNull( NetCDFUtils.empty1DArrayShort( 1 ) );
 		Assert.assertNotNull( NetCDFUtils.empty1DArrayInteger( 1 ) );
+		Assert.assertNotNull( NetCDFUtils.empty1DArrayChar( 1 ) );
 
 		List<BigDecimal> values = new ArrayList<>();
 		IntStream.range( 0, 10 ).forEach( i -> values.add( new BigDecimal( i ) ) );
@@ -77,6 +78,7 @@ public class NetCDFUtilsTest {
 		Assert.assertNotNull( NetCDFUtils.empty2DArrayFloat( 12, 11 ) );
 		Assert.assertNotNull( NetCDFUtils.empty2DArrayShort( 12, 11 ) );
 		Assert.assertNotNull( NetCDFUtils.empty2DArrayInteger( 12, 11 ) );
+		Assert.assertNotNull( NetCDFUtils.empty2DArrayChar( 12, 11 ) );
 
 		List<BigDecimal> yxValues = new ArrayList<>();
 		IntStream.range( 0, 12 ).forEach( j ->
@@ -88,6 +90,12 @@ public class NetCDFUtilsTest {
 		Assert.assertNotNull( NetCDFUtils.create2DArrayInteger( yxValues, 12, 11 ) );
 		Assert.assertNotNull( NetCDFUtils.create2DArrayShort( yxValues, 12, 11 ) );
 		Assert.assertNotNull( NetCDFUtils.create2DArrayDouble( yxValues, 12, 11 ) );
+
+		List<String> strings = new ArrayList<>();
+		strings.add( "hello" );
+		strings.add( "world" );
+		Assert.assertNotNull( NetCDFUtils.create1DArrayChar( strings ) );
+		Assert.assertNotNull( NetCDFUtils.create2DArrayChar( strings, 11 ) );
 
 		// 3D
 		Assert.assertNotNull( NetCDFUtils.empty3DArrayDouble( 1, 12, 11 ) );
