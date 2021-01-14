@@ -590,7 +590,6 @@ public class NetCDFUtils {
 		ArrayChar values = (ArrayChar) stringVariable.read();
 		Index index = values.getIndex();
 		return IntStream.range( 0, shape[0] )
-				.parallel()
 				.mapToObj( i -> values.getString( index.set0( i ) ) )
 				.collect( Collectors.toList() );
 	}
