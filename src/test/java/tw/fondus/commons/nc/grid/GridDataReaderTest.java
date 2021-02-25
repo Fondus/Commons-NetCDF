@@ -1,8 +1,8 @@
 package tw.fondus.commons.nc.grid;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -15,54 +15,51 @@ import java.nio.file.Paths;
  *
  */
 public class GridDataReaderTest {
-	private final String url = "src/test/resources/gfs.t00z.pgrb2.0p25.anl";
+	private static final String url = "src/test/resources/gfs.t00z.pgrb2.0p25.anl";
 
-	@Before
-	public void setUp() {
-		Path path = Paths.get( this.url );
-		Assert.assertTrue( Files.exists( path ) );
+	@BeforeAll
+	public static void setUp() {
+		Path path = Paths.get( url );
+		Assertions.assertTrue( Files.exists( path ) );
 	}
 
 	@Test
 	public void testBottom() throws Exception {
-		try ( GridDataReader reader = GridDataReader.read( this.url ) ){
-			Assert.assertNotNull( reader.getNetCDF() );
-			Assert.assertNotNull( reader.getDataset() );
-			Assert.assertEquals( url, reader.getPath() );
+		try ( GridDataReader reader = GridDataReader.read( url ) ){
+			Assertions.assertNotNull( reader.getNetCDF() );
+			Assertions.assertNotNull( reader.getDataset() );
+			Assertions.assertEquals( url, reader.getPath() );
 		}
 	}
 	
 	@Test
 	public void testReader() throws Exception {
-		try ( GridDataReader reader = GridDataReader.read( this.url )){
-			// Get All
-			Assert.assertFalse( reader.getGlobalAttributes().isEmpty() );
-			Assert.assertFalse( reader.getVariables().isEmpty() );
-			Assert.assertFalse( reader.getGridDataTypes().isEmpty() );
+		try ( GridDataReader reader = GridDataReader.read( url )){
+			Assertions.assertAll( "Get All",
+					() -> Assertions.assertFalse( reader.getGlobalAttributes().isEmpty() ),
+					() -> Assertions.assertFalse( reader.getVariables().isEmpty() ),
+					() -> Assertions.assertFalse( reader.getGridDataTypes().isEmpty() )
+			);
 
-			// Find
-			Assert.assertTrue( reader.findGlobalAttribute( "file_format" ).isPresent() );
-			Assert.assertTrue( reader.findVariable( "Temperature_height_above_ground" ).isPresent() );
-			Assert.assertTrue( reader.findGridDataType( "Temperature_height_above_ground" ).isPresent() );
+			Assertions.assertAll( "Find",
+					() -> Assertions.assertTrue( reader.findGlobalAttribute( "file_format" ).isPresent() ),
+					() -> Assertions.assertTrue( reader.findVariable( "Temperature_height_above_ground" ).isPresent() ),
+					() -> Assertions.assertTrue( reader.findGridDataType( "Temperature_height_above_ground" ).isPresent() )
+			);
 
-			// Has
-			Assert.assertTrue( reader.hasGlobalAttribute( "file_format" ) );
-			Assert.assertTrue( reader.hasVariable( "Temperature_sigma" ) );
-			Assert.assertTrue( reader.hasVariable( "Temperature_height_above_ground" ) );
-			Assert.assertTrue( reader.hasGridDataType( "Temperature_sigma" ) );
-			Assert.assertTrue( reader.hasGridDataType( "Temperature_height_above_ground" ) );
+			Assertions.assertAll( "Has",
+					() -> Assertions.assertTrue( reader.hasGlobalAttribute( "file_format" ) ),
+					() -> Assertions.assertTrue( reader.hasVariable( "Temperature_sigma" ) ),
+					() -> Assertions.assertTrue( reader.hasVariable( "Temperature_height_above_ground" ) ),
+					() -> Assertions.assertTrue( reader.hasGridDataType( "Temperature_sigma" ) ),
+					() -> Assertions.assertTrue( reader.hasGridDataType( "Temperature_height_above_ground" ) )
+			);
 
-			// Grid specific methods
-			Assert.assertTrue( reader.getBoundingBox().isPresent() );
-			Assert.assertTrue( reader.getDateStart().isPresent() );
-			Assert.assertTrue( reader.getDateEnd().isPresent() );
-			
-			reader.getBoundingBox().ifPresent( bbox -> {
-				System.out.println( bbox.getLatMin() );
-				System.out.println( bbox.getLatMax() );
-				System.out.println( bbox.getLonMax() );
-				System.out.println( bbox.getLonMin() );
-			} );
+			Assertions.assertAll( "Grid specific methods",
+					() -> Assertions.assertTrue( reader.getBoundingBox().isPresent() ),
+					() -> Assertions.assertTrue( reader.getDateStart().isPresent() ),
+					() -> Assertions.assertTrue( reader.getDateEnd().isPresent() )
+			);
 		}
 	}
 }
