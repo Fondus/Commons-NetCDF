@@ -1,8 +1,8 @@
 package tw.fondus.commons.nc;
 
 import org.joda.time.DateTime;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import tw.fondus.commons.nc.util.NetCDFUtils;
 import tw.fondus.commons.nc.util.key.DimensionName;
 import tw.fondus.commons.nc.util.key.GlobalAttribute;
@@ -32,10 +32,10 @@ import java.util.stream.IntStream;
  *
  */
 public class NetCDFBuilderTest {
-	private Map<String, Array> valueMap;
+	private static Map<String, Array> valueMap;
 
-	@Before
-	public void prepareData() throws IOException {
+	@BeforeAll
+	public static void prepareData() throws IOException {
 		Files.deleteIfExists( Paths.get( "src/test/resources/test.nc" ) );
 
 		int tSize = 10;
@@ -65,11 +65,11 @@ public class NetCDFBuilderTest {
 		} );
 		ArrayFloat.D3 rainfall = NetCDFUtils.create3DArrayFloat( values, ySize, xSize );
 
-		this.valueMap = new HashMap<>();
-		this.valueMap.put( DimensionName.X, x );
-		this.valueMap.put( DimensionName.Y, y );
-		this.valueMap.put( DimensionName.TIME, times );
-		this.valueMap.put( "rainfall", rainfall );
+		valueMap = new HashMap<>();
+		valueMap.put( DimensionName.X, x );
+		valueMap.put( DimensionName.Y, y );
+		valueMap.put( DimensionName.TIME, times );
+		valueMap.put( "rainfall", rainfall );
 	}
 
 	@Test
@@ -111,10 +111,10 @@ public class NetCDFBuilderTest {
 				.addVariableAttribute( "rainfall", VariableAttribute.KEY_UNITS, "mm" )
 				.addVariableAttribute( "rainfall", VariableAttribute.KEY_MISSING, VariableAttribute.MISSING.doubleValue() )
 				.build() // Finished NetCDF file structures define mode
-				.writeValues( VariableName.TIME, this.valueMap.get( DimensionName.TIME ) )
-				.writeValues( VariableName.Y, this.valueMap.get( DimensionName.Y ) )
-				.writeValues( VariableName.X, this.valueMap.get( DimensionName.X ) )
-				.writeValues( "rainfall", this.valueMap.get( "rainfall" ) )
+				.writeValues( VariableName.TIME, valueMap.get( DimensionName.TIME ) )
+				.writeValues( VariableName.Y, valueMap.get( DimensionName.Y ) )
+				.writeValues( VariableName.X, valueMap.get( DimensionName.X ) )
+				.writeValues( "rainfall", valueMap.get( "rainfall" ) )
 				.close(); // close IO
 	}
 }

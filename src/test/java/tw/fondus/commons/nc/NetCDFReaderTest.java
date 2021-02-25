@@ -1,8 +1,8 @@
 package tw.fondus.commons.nc;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import tw.fondus.commons.nc.util.key.DimensionName;
 
 import java.math.BigDecimal;
@@ -19,121 +19,129 @@ import java.util.Optional;
  *
  */
 public class NetCDFReaderTest {
-	private final String url = "src/test/resources/QPESUMS_QPE.nc";
+	private static final String url = "src/test/resources/QPESUMS_QPE.nc";
 
-	@Before
-	public void setUp() {
-		Path path = Paths.get( this.url );
-		Assert.assertTrue( Files.exists( path ) );
+	@BeforeAll
+	public static void setUp() {
+		Path path = Paths.get( url );
+		Assertions.assertTrue( Files.exists( path ) );
 	}
 
 	@Test
 	public void testBottom() throws Exception {
-		try ( NetCDFReader reader = NetCDFReader.read( Paths.get( this.url ) ) ){
-			Assert.assertNotNull( reader.getNetCDF() );
-			Assert.assertEquals( url, reader.getPath() );
+		try ( NetCDFReader reader = NetCDFReader.read( Paths.get( url ) ) ){
+			Assertions.assertNotNull( reader.getNetCDF() );
+			Assertions.assertEquals( url, reader.getPath() );
 		}
 	}
 	
 	@Test
 	public void testIs() throws Exception {
-		try ( NetCDFReader reader = NetCDFReader.readDataset( this.url ) ){
-			Assert.assertTrue( reader.isWGS84() );
-			Assert.assertTrue( reader.is2D() );
-			Assert.assertFalse( reader.is1D() );
+		try ( NetCDFReader reader = NetCDFReader.readDataset( url ) ){
+			Assertions.assertAll( "2D NetCDF Is",
+					() -> Assertions.assertTrue( reader.isWGS84() ),
+					() -> Assertions.assertTrue( reader.is2D() ),
+					() -> Assertions.assertFalse( reader.is1D() )
+			);
 		}
 
 		try ( NetCDFReader reader = NetCDFReader.readDataset( "src/test/resources/Tide_6M_CWB.nc" ) ){
-			Assert.assertFalse( reader.isWGS84() );
-			Assert.assertFalse( reader.is2D() );
-			Assert.assertTrue( reader.is1D() );
+			Assertions.assertAll( "1D NetCDF Is",
+					() -> Assertions.assertFalse( reader.isWGS84() ),
+					() -> Assertions.assertFalse( reader.is2D() ),
+					() -> Assertions.assertTrue( reader.is1D() )
+			);
 		}
 	}
 
 	@Test
 	public void testTimes() throws Exception {
-		try ( NetCDFReader reader = NetCDFReader.readDataset( this.url ) ){
-			Assert.assertTrue( reader.hasTime() );
-			Assert.assertTrue( reader.findTimes().size() > 0 );
+		try ( NetCDFReader reader = NetCDFReader.readDataset( url ) ){
+			Assertions.assertTrue( reader.hasTime() );
+			Assertions.assertTrue( reader.findTimes().size() > 0 );
 		}
 	}
 
 	@Test
 	public void testDimensionLength() throws Exception {
-		try ( NetCDFReader reader = NetCDFReader.readDataset( this.url ) ){
-			Assert.assertEquals( 144, reader.getDimensionLength( DimensionName.TIME ) );
-			Assert.assertEquals( 441, reader.getDimensionLength( DimensionName.X ) );
-			Assert.assertEquals( 561, reader.getDimensionLength( DimensionName.Y ) );
+		try ( NetCDFReader reader = NetCDFReader.readDataset( url ) ){
+			Assertions.assertEquals( 144, reader.getDimensionLength( DimensionName.TIME ) );
+			Assertions.assertEquals( 441, reader.getDimensionLength( DimensionName.X ) );
+			Assertions.assertEquals( 561, reader.getDimensionLength( DimensionName.Y ) );
 		}
 	}
 	
 	@Test
 	public void testRead() throws Exception {
-		try ( NetCDFReader reader = NetCDFReader.read( this.url )){
-			// Get All
-			Assert.assertFalse( reader.getGlobalAttributes().isEmpty() );
-			Assert.assertFalse( reader.getDimensions().isEmpty() );
-			Assert.assertFalse( reader.getVariables().isEmpty() );
+		try ( NetCDFReader reader = NetCDFReader.read( url )){
+			Assertions.assertAll( "Get All",
+					() -> Assertions.assertFalse( reader.getGlobalAttributes().isEmpty() ),
+					() -> Assertions.assertFalse( reader.getDimensions().isEmpty() ),
+					() -> Assertions.assertFalse( reader.getVariables().isEmpty() )
+			);
 
-			// Find
-			Assert.assertTrue( reader.findGlobalAttribute( "references" ).isPresent() );
-			Assert.assertTrue( reader.findDimension( "time" ).isPresent() );
-			Assert.assertTrue( reader.findVariable( "precipitation_radar" ).isPresent() );
+			Assertions.assertAll( "Find",
+					() -> Assertions.assertTrue( reader.findGlobalAttribute( "references" ).isPresent() ),
+					() -> Assertions.assertTrue( reader.findDimension( "time" ).isPresent() ),
+					() -> Assertions.assertTrue( reader.findVariable( "precipitation_radar" ).isPresent() )
+			);
 
-			// Has
-			Assert.assertTrue( reader.hasGlobalAttribute( "references" ) );
-			Assert.assertTrue( reader.hasDimension( "time" ) );
-			Assert.assertTrue( reader.hasVariable( "x" ) );
-			Assert.assertTrue( reader.hasVariable( "y" ) );
-			Assert.assertTrue( reader.hasVariable( "precipitation_radar" ) );
+			Assertions.assertAll( "Has",
+					() -> Assertions.assertTrue( reader.hasGlobalAttribute( "references" ) ),
+					() -> Assertions.assertTrue( reader.hasDimension( "time" ) ),
+					() -> Assertions.assertTrue( reader.hasVariable( "x" ) ),
+					() -> Assertions.assertTrue( reader.hasVariable( "y" ) ),
+					() -> Assertions.assertTrue( reader.hasVariable( "precipitation_radar" ) )
+			);
 
-			// Read
-			Assert.assertTrue( reader.readVariable( "time" ).isPresent() );
-			Assert.assertTrue( reader.readVariable( "x" ).isPresent() );
-			Assert.assertTrue( reader.readVariable( "y" ).isPresent() );
-			Assert.assertTrue( reader.readVariable( "precipitation_radar" ).isPresent() );
+			Assertions.assertAll( "Read",
+					() -> Assertions.assertTrue( reader.readVariable( "time" ).isPresent() ),
+					() -> Assertions.assertTrue( reader.readVariable( "x" ).isPresent() ),
+					() -> Assertions.assertTrue( reader.readVariable( "y" ).isPresent() ),
+					() -> Assertions.assertTrue( reader.readVariable( "precipitation_radar" ).isPresent() )
+			);
 		}
 	}
 
 	@Test
 	public void testReadFirstValue() throws Exception {
-		try ( NetCDFReader reader = NetCDFReader.read( this.url )){
-			Assert.assertTrue( reader.findFirstX().isPresent() );
-			Assert.assertTrue( reader.findFirstY().isPresent() );
+		try ( NetCDFReader reader = NetCDFReader.read( url )){
+			Assertions.assertTrue( reader.findFirstX().isPresent() );
+			Assertions.assertTrue( reader.findFirstY().isPresent() );
 
-			reader.findFirstX().ifPresent( value -> Assert.assertEquals( new BigDecimal( "118.00625" ), value ) );
-			reader.findFirstY().ifPresent( value -> Assert.assertEquals( new BigDecimal( "19.99375" ), value ) );
+			reader.findFirstX().ifPresent( value -> Assertions.assertEquals( new BigDecimal( "118.00625" ), value ) );
+			reader.findFirstY().ifPresent( value -> Assertions.assertEquals( new BigDecimal( "19.99375" ), value ) );
 		}
 	}
 
 	@Test
 	public void testReadLastValue() throws Exception {
-		try ( NetCDFReader reader = NetCDFReader.read( this.url )){
-			Assert.assertTrue( reader.findLastX().isPresent() );
-			Assert.assertTrue( reader.findLastY().isPresent() );
+		try ( NetCDFReader reader = NetCDFReader.read( url )){
+			Assertions.assertTrue( reader.findLastX().isPresent() );
+			Assertions.assertTrue( reader.findLastY().isPresent() );
 
-			reader.findLastX().ifPresent( value -> Assert.assertEquals( new BigDecimal( "123.50625" ), value ) );
-			reader.findLastY().ifPresent( value -> Assert.assertEquals( new BigDecimal( "26.99375" ), value ) );
+			reader.findLastX().ifPresent( value -> Assertions.assertEquals( new BigDecimal( "123.50625" ), value ) );
+			reader.findLastY().ifPresent( value -> Assertions.assertEquals( new BigDecimal( "26.99375" ), value ) );
 		}
 	}
 
 	@Test
 	public void testFindCoordinates() throws Exception {
-		try ( NetCDFReader reader = NetCDFReader.read( this.url )){
+		try ( NetCDFReader reader = NetCDFReader.read( url )){
 			Optional<List<BigDecimal>> optionalY = reader.findYCoordinates();
 			Optional<List<BigDecimal>> optionalX = reader.findXCoordinates();
 
-			Assert.assertTrue( optionalY.isPresent() );
-			Assert.assertTrue( optionalX.isPresent() );
+			Assertions.assertTrue( optionalY.isPresent() );
+			Assertions.assertTrue( optionalX.isPresent() );
 
 			optionalY.ifPresent( y -> {
-				reader.findFirstY().ifPresent( firstY -> Assert.assertEquals( firstY, y.get( 0 ) ) );
-				reader.findLastY().ifPresent( lastY -> Assert.assertEquals( lastY, y.get( y.size() - 1 ) ) );
+				reader.findFirstY().ifPresent( firstY -> Assertions.assertEquals( firstY, y.get( 0 ) ) );
+				reader.findLastY().ifPresent( lastY -> Assertions.assertEquals( lastY, y.get( y.size() - 1 ) ) );
 			} );
 
 			optionalX.ifPresent( x -> {
-				reader.findFirstX().ifPresent( firstX -> Assert.assertEquals( firstX, x.get( 0 ) ) );
-				reader.findLastX().ifPresent( lastX -> Assert.assertEquals( lastX, x.get( x.size() - 1 ) ) );
+				reader.findFirstX().ifPresent( firstX -> Assertions.assertEquals( firstX, x.get( 0 ) ) );
+				reader.findLastX().ifPresent( lastX -> Assertions.assertEquals( lastX, x.get( x.size() - 1 ) ) );
 			} );
 		}
 
@@ -141,8 +149,8 @@ public class NetCDFReaderTest {
 			Optional<List<BigDecimal>> optionalY = reader.findLatCoordinates();
 			Optional<List<BigDecimal>> optionalX = reader.findLonCoordinates();
 
-			Assert.assertTrue( optionalY.isPresent() );
-			Assert.assertTrue( optionalX.isPresent() );
+			Assertions.assertTrue( optionalY.isPresent() );
+			Assertions.assertTrue( optionalX.isPresent() );
 		}
 	}
 
@@ -151,15 +159,15 @@ public class NetCDFReaderTest {
 		String url = "src/test/resources/Tide_6M_CWB.nc";
 
 		Path path = Paths.get( url );
-		Assert.assertTrue( Files.exists( path ) );
+		Assertions.assertTrue( Files.exists( path ) );
 
 		try ( NetCDFReader reader = NetCDFReader.read( url ) ){
 			Optional<List<String>> optional = reader.findStationIds();
-			Assert.assertTrue( optional.isPresent() );
+			Assertions.assertTrue( optional.isPresent() );
 
 			optional.ifPresent( ids -> {
-				Assert.assertEquals( "1102", ids.get( 0 ) );
-				Assert.assertEquals( "1116", ids.get( 1 ) );
+				Assertions.assertEquals( "1102", ids.get( 0 ) );
+				Assertions.assertEquals( "1116", ids.get( 1 ) );
 			} );
 		}
 	}
