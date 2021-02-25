@@ -43,7 +43,6 @@
 		<jodatime.version>2.10.5</jodatime.version>
 		<netcdf.version>4.6.14</netcdf.version>
 		<guava.version>28.2-jre</guava.version>
-		<junit4.version>4.13.1</junit4.version>
 		<junit5.version>5.7.1</junit5.version>
 	</properties>
 
@@ -129,28 +128,10 @@
 		</dependency>
 		<!-- JUnit -->
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>${junit4.version}</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter-engine</artifactId>
 			<version>${junit5.version}</version>
 			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.junit.vintage</groupId>
-			<artifactId>junit-vintage-engine</artifactId>
-			<version>${junit5.version}</version>
-			<scope>test</scope>
-			<exclusions>
-				<exclusion>
-					<artifactId>junit</artifactId>
-					<groupId>junit</groupId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 		<!-- Log4J for Test -->
 		<dependency>
