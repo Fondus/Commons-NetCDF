@@ -3,11 +3,10 @@
 
 	<groupId>tw.fondus.commons</groupId>
 	<artifactId>commons-netcdf</artifactId>
-	<version>1.2.2</version>
+	<version>1.2.3</version>
 	<packaging>jar</packaging>
 
 	<name>The Commons-NetCDF Library</name>
-	<url>http://maven.apache.org</url>
 	<inceptionYear>2017</inceptionYear>
 
 	<description>
@@ -40,9 +39,9 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<slf4j.version>1.7.30</slf4j.version>
 		<log4j.version>2.13.2</log4j.version>
-		<jodatime.version>2.10.5</jodatime.version>
-		<netcdf.version>4.6.14</netcdf.version>
-		<guava.version>28.2-jre</guava.version>
+		<jodatime.version>2.10.10</jodatime.version>
+		<netcdf.version>4.6.16</netcdf.version>
+		<guava.version>30.1.1-jre</guava.version>
 		<junit5.version>5.7.1</junit5.version>
 	</properties>
 
