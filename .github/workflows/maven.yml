@@ -1,8 +1,6 @@
 name: Java CI Build
 
 on:
-  push:
-    branches: [ github-action-ci ]
   pull_request:
     branches: [ master, devlop ]
 
