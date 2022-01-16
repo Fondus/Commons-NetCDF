@@ -2,10 +2,10 @@ name: Publish package to GitHub Packages
 
 on:
   release:
-    types: [created]
+    types: [published]
 
 jobs:
-  build:
+  release:
     runs-on: ubuntu-latest
     permissions:
       contents: read
