@@ -1,14 +1,15 @@
-name: Java CI Build
+name: Publish package to GitHub Packages
 
 on:
-  push:
-    branches: [ github-action-ci ]
-  pull_request:
-    branches: [ master, devlop ]
+  release:
+    types: [created]
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     strategy:
       matrix:
         java: [ 8 ]
@@ -20,5 +21,7 @@ jobs:
         with:
           distribution: 'adopt'
           java-version: ${{ matrix.java }}
-      - name: Build with Maven
-        run: mvn -B package --file pom.xml
+      - name: Publish package
+        run: mvn --batch-mode deploy
+        env:
+          GITHUB_TOKEN: ${{ secrets.ACTION_TOKEN }}
