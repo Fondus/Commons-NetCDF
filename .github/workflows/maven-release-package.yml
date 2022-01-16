@@ -1,10 +1,8 @@
 name: Publish package to GitHub Packages
 
 on:
-  push:
-    branches: [ github-action-ci ]
   release:
-    types: [created, edited]
+    types: [created]
 
 jobs:
   build:
