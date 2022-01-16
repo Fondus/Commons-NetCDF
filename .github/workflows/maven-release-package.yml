@@ -5,7 +5,7 @@ on:
     types: [published]
 
 jobs:
-  release:
+  release-packages:
     runs-on: ubuntu-latest
     permissions:
       contents: read
